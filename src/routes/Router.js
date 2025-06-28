@@ -12,24 +12,57 @@ const ModernDash = Loadable(lazy(() => import('../views/dashboard/Modern')));
 const EcommerceDash = Loadable(lazy(() => import('../views/dashboard/Ecommerce')));
 
 /* ****Apps***** */
-const Chats = Loadable(lazy(() => import('../views/apps/chat/Chat')));
-const Notes = Loadable(lazy(() => import('../views/apps/notes/Notes')));
-const Calendar = Loadable(lazy(() => import('../views/apps/calendar/BigCalendar')));
-const Email = Loadable(lazy(() => import('../views/apps/email/Email')));
-const Blog = Loadable(lazy(() => import('../views/apps/blog/Blog')));
-const BlogDetail = Loadable(lazy(() => import('../views/apps/blog/BlogPost')));
-const Tickets = Loadable(lazy(() => import('../views/apps/tickets/Tickets')));
-const Contacts = Loadable(lazy(() => import('../views/apps/contacts/Contacts')));
-const Ecommerce = Loadable(lazy(() => import('../views/apps/eCommerce/Ecommerce')));
-const EcommerceDetail = Loadable(lazy(() => import('../views/apps/eCommerce/EcommerceDetail')));
-const EcomProductList = Loadable(lazy(() => import('../views/apps/eCommerce/EcomProductList')));
-const EcomProductCheckout = Loadable(
-  lazy(() => import('../views/apps/eCommerce/EcommerceCheckout')),
-);
-const UserProfile = Loadable(lazy(() => import('../views/apps/user-profile/UserProfile')));
-const Followers = Loadable(lazy(() => import('../views/apps/user-profile/Followers')));
-const Friends = Loadable(lazy(() => import('../views/apps/user-profile/Friends')));
-const Gallery = Loadable(lazy(() => import('../views/apps/user-profile/Gallery')));
+// const Chats = Loadable(lazy(() => import('../views/apps/chat/Chat')));
+// const Notes = Loadable(lazy(() => import('../views/apps/notes/Notes')));
+// const Calendar = Loadable(lazy(() => import('../views/apps/calendar/BigCalendar')));
+// const Email = Loadable(lazy(() => import('../views/apps/email/Email')));
+// const Blog = Loadable(lazy(() => import('../views/apps/blog/Blog')));
+// const BlogDetail = Loadable(lazy(() => import('../views/apps/blog/BlogPost')));
+// const Tickets = Loadable(lazy(() => import('../views/apps/tickets/Tickets')));
+// const Contacts = Loadable(lazy(() => import('../views/apps/contacts/Contacts')));
+
+
+// const Ecommerce = Loadable(lazy(() => import('../views/apps/eCommerce/Ecommerce')));
+// const EcommerceDetail = Loadable(lazy(() => import('../views/apps/eCommerce/EcommerceDetail')));
+// const EcomProductList = Loadable(lazy(() => import('../views/apps/eCommerce/EcomProductList')));
+// const EcomProductCheckout = Loadable(
+//   lazy(() => import('../views/apps/eCommerce/EcommerceCheckout')),
+// );
+// const UserProfile = Loadable(lazy(() => import('../views/apps/user-profile/UserProfile')));
+// const Followers = Loadable(lazy(() => import('../views/apps/user-profile/Followers')));
+// const Friends = Loadable(lazy(() => import('../views/apps/user-profile/Friends')));
+// const Gallery = Loadable(lazy(() => import('../views/apps/user-profile/Gallery')));
+
+
+
+
+
+const PendingOrders = Loadable(lazy(() => import('../views/apps/manageOrders/PendingOrders')));
+const DispatchedOrders = Loadable(lazy(() => import('../views/apps/manageOrders/DispatchedOrders')));
+const DeliveredOrders = Loadable(lazy(() => import('../views/apps/manageOrders/DeliveredOrders')));
+
+/***Inventory***/
+const DisableProduct = Loadable(lazy(() => import('../views/apps/inventory/DisableProduct')));
+const UpdateQuantity = Loadable(lazy(() => import('../views/apps/inventory/UpdateQuantity')));
+const ManageProducts = Loadable(lazy(() => import('../views/apps/inventory/ManageProducts')));
+
+/***Sales***/
+const AmountSales = Loadable(lazy(() => import('../views/apps/sales/AmountSales')));
+const ProductSales = Loadable(lazy(() => import('../views/apps/sales/ProductSales')));
+
+/***Offers***/
+const CreateOffer = Loadable(lazy(() => import('../views/apps/offers/CreateOffer')));
+const OfferAnalytics = Loadable(lazy(() => import('../views/apps/offers/OfferAnalytics')));
+
+/***Customers***/
+const NewCustomers = Loadable(lazy(() => import('../views/apps/customers/NewCustomers')));
+const CustomersStats = Loadable(lazy(() => import('../views/apps/customers/CustomersStats')));
+
+
+/***Users***/
+const AddUser = Loadable(lazy(() => import('../views/apps/user-profile/AddUser')));
+
+
 
 // Pages
 const RollbaseCASL = Loadable(lazy(() => import('../views/pages/rollbaseCASL/RollbaseCASL')));
@@ -121,22 +154,35 @@ const Router = [
       { path: '/', element: <Navigate to="/dashboards/modern" /> },
       { path: '/dashboards/modern', exact: true, element: <ModernDash /> },
       { path: '/dashboards/ecommerce', exact: true, element: <EcommerceDash /> },
-      { path: '/apps/chats', element: <Chats /> },
-      { path: '/apps/notes', element: <Notes /> },
-      { path: '/apps/calendar', element: <Calendar /> },
-      { path: '/apps/email', element: <Email /> },
-      { path: '/apps/tickets', element: <Tickets /> },
-      { path: '/apps/contacts', element: <Contacts /> },
-      { path: '/apps/ecommerce/shop', element: <Ecommerce /> },
-      { path: '/apps/blog/posts', element: <Blog /> },
-      { path: '/apps/blog/detail/:id', element: <BlogDetail /> },
-      { path: '/apps/ecommerce/eco-product-list', element: <EcomProductList /> },
-      { path: '/apps/ecommerce/eco-checkout', element: <EcomProductCheckout /> },
-      { path: '/apps/ecommerce/detail/:id', element: <EcommerceDetail /> },
-      { path: '/apps/followers', element: <Followers /> },
-      { path: '/apps/friends', element: <Friends /> },
-      { path: '/apps/gallery', element: <Gallery /> },
-      { path: '/user-profile', element: <UserProfile /> },
+      { path: '/pendingOrders', element: <PendingOrders /> },
+      { path: '/dispatchedOrders', element: <DispatchedOrders /> },
+      { path: '/deliveredOrders', element: <DeliveredOrders /> },
+      { path: '/manageProducts', element: <ManageProducts /> },
+      { path: '/updateQuantity', element: <UpdateQuantity /> },
+      { path: '/disableProduct', element: <DisableProduct /> },
+      { path: '/amountSales', element: <AmountSales /> },
+      { path: '/productSales', element: <ProductSales /> },
+      { path: '/createOffer', element: <CreateOffer /> },
+      { path: '/offerAnalytics', element: <OfferAnalytics /> },
+      { path: '/newCustomers', element: <NewCustomers /> },
+      { path: '/customersStats', element: <CustomersStats /> },
+      { path: '/addUser', element: <AddUser /> },
+      // { path: '/apps/chats', element: <Chats /> },
+      // { path: '/apps/notes', element: <Notes /> },
+      // { path: '/apps/calendar', element: <Calendar /> },
+      // { path: '/apps/email', element: <Email /> },
+      // { path: '/apps/tickets', element: <Tickets /> },
+      // { path: '/apps/contacts', element: <Contacts /> },
+      // { path: '/apps/ecommerce/shop', element: <Ecommerce /> },
+      // { path: '/apps/blog/posts', element: <Blog /> },
+      // { path: '/apps/blog/detail/:id', element: <BlogDetail /> },
+      // { path: '/apps/ecommerce/eco-product-list', element: <EcomProductList /> },
+      // { path: '/apps/ecommerce/eco-checkout', element: <EcomProductCheckout /> },
+      // { path: '/apps/ecommerce/detail/:id', element: <EcommerceDetail /> },
+      // { path: '/apps/followers', element: <Followers /> },
+      // { path: '/apps/friends', element: <Friends /> },
+      // { path: '/apps/gallery', element: <Gallery /> },
+      // { path: '/user-profile', element: <UserProfile /> },
       { path: '/pages/casl', element: <RollbaseCASL /> },
       { path: '/pages/treeview', element: <Treeview /> },
       { path: '/pages/pricing', element: <Pricing /> },
