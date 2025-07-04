@@ -23,6 +23,13 @@ import LastPageIcon from '@mui/icons-material/LastPage';
 import { useTheme } from '@mui/material/styles';
 import Breadcrumb from '../../../layouts/full/shared/breadcrumb/Breadcrumb';
 import usePendingOrders from '../../../hooks/usePendingOrders';
+import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
+} from '@mui/material';
 
 const BCrumb = [
   { to: '/', title: 'Home' },
@@ -60,6 +67,26 @@ function TablePaginationActions(props) {
 const PendingOrders = () => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [openDialog, setOpenDialog] = useState(false);
+const [selectedOrderId, setSelectedOrderId] = useState(null);
+
+const handleOpenDialog = (orderId) => {
+  setSelectedOrderId(orderId);
+  setOpenDialog(true);
+};
+
+const handleCloseDialog = () => {
+  setOpenDialog(false);
+  setSelectedOrderId(null);
+};
+
+const handleConfirmUpdate = () => {
+  if (selectedOrderId) {
+    handleStatusUpdate(selectedOrderId);
+    handleCloseDialog();
+  }
+};
+
 
   const {
     pendingOrders,
@@ -105,13 +132,24 @@ const PendingOrders = () => {
                     <Chip label={row.status} color="warning" size="small" />
                   </TableCell>
                   <TableCell>${row.total_amount}</TableCell>
-                  <TableCell>{new Date(row.created_at).toLocaleString()}</TableCell>
+                  <TableCell>
+                      {new Date(row.created_at).toLocaleDateString('en-IN', {
+                        year: 'numeric',
+                        month: 'short',
+                        day: 'numeric',
+                      })}{' '}
+                      {new Date(row.created_at).toLocaleTimeString('en-IN', {
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        hour12: true,
+                      })}
+                  </TableCell>
                   <TableCell>
                     <Button
                       variant="contained"
                       size="small"
                       disabled={btnLoadingId === row.id}
-                      onClick={() => handleStatusUpdate(row.id)}
+                      onClick={() => handleOpenDialog(row.id)}
                       startIcon={
                         btnLoadingId === row.id ? <CircularProgress size={18} color="inherit" /> : null
                       }
@@ -144,6 +182,25 @@ const PendingOrders = () => {
             </TableFooter>
           </Table>
         </TableContainer>
+        <Dialog
+          open={openDialog}
+          onClose={handleCloseDialog}
+        >
+          <DialogTitle>Confirm Dispatch</DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+              Are you sure you want to mark this order as dispatched?
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleCloseDialog} color="secondary">
+              Cancel
+            </Button>
+            <Button onClick={handleConfirmUpdate} color="primary" variant="contained">
+              Yes, Dispatch
+            </Button>
+          </DialogActions>
+        </Dialog>
       </Paper>
     </>
   );

@@ -66,6 +66,16 @@ export const useInventory = () => {
     if (res.data.success) setBrands(res.data.data);
   };
 
+    const enableProduct = async (id) => {
+    try {
+      const res = await axios.put(`/products/enableProduct/${id}`);
+      return res.data;
+    } catch (err) {
+      console.error("Enable product error:", err);
+      throw err;
+    }
+  };
+
   return {
     getProducts,
     updateStock,
@@ -76,5 +86,6 @@ export const useInventory = () => {
     addOrEditProduct,
     getBrands,
     brands,
+    enableProduct,
   };
 };

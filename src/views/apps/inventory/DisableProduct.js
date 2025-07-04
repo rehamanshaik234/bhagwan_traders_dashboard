@@ -13,6 +13,15 @@ import {
   TableFooter,
   TablePagination,
   IconButton,
+  Button,
+  Snackbar,
+} from "@mui/material";
+import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
 } from "@mui/material";
 import {
   FirstPage as FirstPageIcon,
@@ -24,7 +33,7 @@ import { useTheme } from "@mui/material/styles";
 import Breadcrumb from "../../../layouts/full/shared/breadcrumb/Breadcrumb";
 import { useInventory } from "../../../hooks/inventory/useInventory";
 
-// Pagination action buttons
+// Pagination Actions...
 function TablePaginationActions({ count, page, rowsPerPage, onPageChange }) {
   const theme = useTheme();
 
@@ -58,14 +67,38 @@ const BCrumb = [
 ];
 
 const DisableProduct = () => {
-  const { getProducts, products, categories } = useInventory();
+  const { getProducts, products, categories, enableProduct } = useInventory();
 
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [loadingId, setLoadingId] = useState(null);
+  const [snackbar, setSnackbar] = useState({
+  open: false,
+  message: "",
+});
+const [confirmDialog, setConfirmDialog] = useState({
+  open: false,
+  productId: null,
+});
+
 
   useEffect(() => {
     getProducts({ is_active: 0 });
   }, []);
+
+const handleEnable = async (id) => {
+  try {
+    setLoadingId(id);
+    await enableProduct(id);
+    setSnackbar({ open: true, message: "Product enabled successfully" });
+    await getProducts({ is_active: 0 });
+  } catch (err) {
+    setSnackbar({ open: true, message: "Failed to enable product" });
+  } finally {
+    setLoadingId(null);
+  }
+};
+
 
   const handleChangePage = (event, newPage) => setPage(newPage);
   const handleChangeRowsPerPage = (event) => {
@@ -90,12 +123,13 @@ const DisableProduct = () => {
         <TableContainer>
           <Table>
             <TableHead>
-              <TableRow sx={{ backgroundColor: '#f5f5f5' }}>
+              <TableRow sx={{ backgroundColor: "#f5f5f5" }}>
                 <TableCell>Name</TableCell>
                 <TableCell>Category</TableCell>
                 <TableCell>Price</TableCell>
                 <TableCell>Stock</TableCell>
                 <TableCell>Status</TableCell>
+                <TableCell>Action</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -111,12 +145,25 @@ const DisableProduct = () => {
                       <TableCell>
                         <Chip label="Disabled" color="default" size="small" />
                       </TableCell>
+                      <TableCell>
+                        <Button
+                          variant="outlined"
+                          color="success"
+                          size="small"
+                          onClick={() =>
+                            setConfirmDialog({ open: true, productId: prod.id })
+                          }
+                          disabled={loadingId === prod.id}
+                        >
+                          {loadingId === prod.id ? "Enabling..." : "Enable"}
+                        </Button>
+                      </TableCell>
                     </TableRow>
                   );
                 })
               ) : (
                 <TableRow>
-                  <TableCell colSpan={5} align="center">
+                  <TableCell colSpan={6} align="center">
                     No disabled products found.
                   </TableCell>
                 </TableRow>
@@ -126,7 +173,7 @@ const DisableProduct = () => {
               <TableRow>
                 <TablePagination
                   rowsPerPageOptions={[5, 10, 25, { label: "All", value: -1 }]}
-                  colSpan={5}
+                  colSpan={6}
                   count={products.length}
                   rowsPerPage={rowsPerPage}
                   page={page}
@@ -140,6 +187,42 @@ const DisableProduct = () => {
           </Table>
         </TableContainer>
       </Paper>
+      <Dialog
+        open={confirmDialog.open}
+        onClose={() => setConfirmDialog({ open: false, productId: null })}
+      >
+        <DialogTitle>Confirm Enable</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Are you sure you want to enable this product?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={() => setConfirmDialog({ open: false, productId: null })}
+            color="inherit"
+          >
+            Cancel
+          </Button>
+          <Button
+            onClick={async () => {
+              await handleEnable(confirmDialog.productId);
+              setConfirmDialog({ open: false, productId: null });
+            }}
+            color="success"
+            variant="contained"
+          >
+            Yes, Enable
+          </Button>
+        </DialogActions>
+      </Dialog>
+      <Snackbar
+          open={snackbar.open}
+          autoHideDuration={3000}
+          onClose={() => setSnackbar({ ...snackbar, open: false })}
+          message={snackbar.message}
+          anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+        />
     </Box>
   );
 };

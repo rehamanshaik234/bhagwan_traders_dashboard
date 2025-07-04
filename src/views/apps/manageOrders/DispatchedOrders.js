@@ -114,7 +114,18 @@ const DispatchedOrder = () => {
                       <Chip label={row.status} color="info" size="small" />
                     </TableCell>
                     <TableCell>₹{row.total_amount}</TableCell>
-                    <TableCell>{new Date(row.created_at).toLocaleString()}</TableCell>
+                    <TableCell>
+                      {new Date(row.created_at).toLocaleDateString('en-IN', {
+                        year: 'numeric',
+                        month: 'short',
+                        day: 'numeric',
+                      })}{' '}
+                      {new Date(row.created_at).toLocaleTimeString('en-IN', {
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        hour12: true,
+                      })}
+                    </TableCell>
                   </TableRow>
                 ))}
                 {emptyRows > 0 && (
