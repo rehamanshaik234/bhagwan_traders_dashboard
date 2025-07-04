@@ -75,7 +75,7 @@ const AccountSetting = () => {
                   {...a11yProps(0)}
                 />
 
-                <Tab
+                {/* <Tab
                   iconPosition="start"
                   icon={<IconBell size="22" />}
                   label="Notifications"
@@ -92,7 +92,7 @@ const AccountSetting = () => {
                   icon={<IconLock size="22" />}
                   label="Security"
                   {...a11yProps(3)}
-                />
+                /> */}
               </Tabs>
             </Box>
             <Divider />
@@ -100,7 +100,7 @@ const AccountSetting = () => {
               <TabPanel value={value} index={0}>
                 <AccountTab />
               </TabPanel>
-              <TabPanel value={value} index={1}>
+              {/* <TabPanel value={value} index={1}>
                 <NotificationTab />
               </TabPanel>
               <TabPanel value={value} index={2}>
@@ -108,7 +108,7 @@ const AccountSetting = () => {
               </TabPanel>
               <TabPanel value={value} index={3}>
                 <SecurityTab />
-              </TabPanel>
+              </TabPanel> */}
             </CardContent>
           </BlankCard>
         </Grid>

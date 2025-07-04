@@ -8,7 +8,7 @@ const NavGroup = ({ item, hideMenu }) => {
     ({ theme }) => ({
       ...theme.typography.overline,
       fontWeight: '700',
-      marginTop: theme.spacing(3),
+      marginTop: theme.spacing(2),
       marginBottom: theme.spacing(0),
       color: theme.palette.text.secondary,
       lineHeight: '26px',

@@ -6,11 +6,13 @@ import EmailReducer from './apps/email/EmailSlice';
 import TicketReducer from './apps/tickets/TicketSlice';
 import ContactsReducer from './apps/contacts/ContactSlice';
 import EcommerceReducer from './apps/eCommerce/EcommerceSlice';
-import UserProfileReducer from './apps/userProfile/UserProfileSlice';
 import BlogReducer from './apps/blog/BlogSlice';
 import orderReducer from './apps/orders/orderSlice';
 import inventoryReducer from './apps/inventory/inventorySlice';
 import customersReducer from "./apps/customers/customersSlice";
+import userReducer from "./apps/userProfile/usersSlice";
+import authReducer from './apps/auth/authSlice';
+import salesReducer from './apps/sales/salesSlice';
 
 export const store = configureStore({
   reducer: {
@@ -21,11 +23,13 @@ export const store = configureStore({
     contactsReducer: ContactsReducer,
     ticketReducer: TicketReducer,
     ecommerceReducer: EcommerceReducer,
-    userpostsReducer: UserProfileReducer,
     blogReducer: BlogReducer,
      orders: orderReducer,
      inventory: inventoryReducer,
      customers: customersReducer,
+     users: userReducer,
+     auth: authReducer,
+     sales: salesReducer,
   },
 });
 

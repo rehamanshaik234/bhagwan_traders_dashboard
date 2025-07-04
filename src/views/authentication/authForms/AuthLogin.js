@@ -1,91 +1,92 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Typography,
-  FormGroup,
-  FormControlLabel,
   Button,
   Stack,
-  Divider,
+  Snackbar,
 } from '@mui/material';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
-import CustomCheckbox from '../../../components/forms/theme-elements/CustomCheckbox';
 import CustomTextField from '../../../components/forms/theme-elements/CustomTextField';
 import CustomFormLabel from '../../../components/forms/theme-elements/CustomFormLabel';
+import useAuth from '../../../hooks/auth/useAuth';
 
-import AuthSocialButtons from './AuthSocialButtons';
+const AuthLogin = ({ title, subtitle, subtext }) => {
+  const { login, error, loading, isAuthenticated } = useAuth();
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [showError, setShowError] = useState(false);
+  const navigate = useNavigate();
 
-const AuthLogin = ({ title, subtitle, subtext }) => (
-  <>
-    {title ? (
-      <Typography fontWeight="700" variant="h3" mb={1}>
-        {title}
-      </Typography>
-    ) : null}
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate('/dashboards/ecommerce');
+    }
+  }, [isAuthenticated, navigate]);
 
-    {subtext}
+  useEffect(() => {
+    if (error) setShowError(true);
+  }, [error]);
 
-    <AuthSocialButtons title="Sign in with" />
-    <Box mt={3}>
-      <Divider>
-        <Typography
-          component="span"
-          color="textSecondary"
-          variant="h6"
-          fontWeight="400"
-          position="relative"
-          px={2}
-        >
-          or sign in with
+  const handleLogin = () => {
+    login(username, password);
+  };
+
+  return (
+    <>
+      {title && (
+        <Typography fontWeight="700" variant="h3" mb={1}>
+          {title}
         </Typography>
-      </Divider>
-    </Box>
+      )}
+      {subtext}
 
-    <Stack>
-      <Box>
-        <CustomFormLabel htmlFor="username">Username</CustomFormLabel>
-        <CustomTextField id="username" variant="outlined" fullWidth />
-      </Box>
-      <Box>
-        <CustomFormLabel htmlFor="password">Password</CustomFormLabel>
-        <CustomTextField id="password" type="password" variant="outlined" fullWidth />
-      </Box>
-      <Stack justifyContent="space-between" direction="row" alignItems="center" my={2}>
-        <FormGroup>
-          <FormControlLabel
-            control={<CustomCheckbox defaultChecked />}
-            label="Remeber this Device"
+      <Stack>
+        <Box>
+          <CustomFormLabel htmlFor="username">Username</CustomFormLabel>
+          <CustomTextField
+            id="username"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            fullWidth
           />
-        </FormGroup>
-        <Typography
-          component={Link}
-          to="/auth/forgot-password"
-          fontWeight="500"
-          sx={{
-            textDecoration: 'none',
-            color: 'primary.main',
-          }}
-        >
-          Forgot Password ?
-        </Typography>
+        </Box>
+        <Box>
+          <CustomFormLabel htmlFor="password">Password</CustomFormLabel>
+          <CustomTextField
+            id="password"
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            fullWidth
+          />
+        </Box>
       </Stack>
-    </Stack>
-    <Box>
-      <Button
-        color="primary"
-        variant="contained"
-        size="large"
-        fullWidth
-        component={Link}
-        to="/"
-        type="submit"
-      >
-        Sign In
-      </Button>
-    </Box>
-    {subtitle}
-  </>
-);
+
+      <Box mt={2}>
+        <Button
+          color="primary"
+          variant="contained"
+          size="large"
+          fullWidth
+          onClick={handleLogin}
+          disabled={loading}
+        >
+          {loading ? 'Signing In...' : 'Sign In'}
+        </Button>
+      </Box>
+
+      {subtitle}
+
+      <Snackbar
+        open={showError}
+        autoHideDuration={4000}
+        onClose={() => setShowError(false)}
+        message={error}
+      />
+    </>
+  );
+};
 
 export default AuthLogin;

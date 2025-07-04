@@ -1,9 +1,11 @@
 import * as React from 'react';
-import { IconButton, Box, AppBar, useMediaQuery, Toolbar, styled, Stack } from '@mui/material';
+import { IconButton, Box, AppBar, useMediaQuery, Toolbar, styled, Stack, FormControl, Select, MenuItem, FormControlLabel, Switch } from '@mui/material';
 import PropTypes from 'prop-types';
 import { useSelector, useDispatch } from 'react-redux';
-import { toggleMobileSidebar } from 'src/store/customizer/CustomizerSlice';
+import { toggleMobileSidebar, toggleHorizontal, setDarkMode, toggleSidebar } from 'src/store/customizer/CustomizerSlice';
 import { IconMenu2 } from '@tabler/icons';
+import WbSunnyTwoToneIcon from '@mui/icons-material/WbSunnyTwoTone';
+import DarkModeTwoToneIcon from '@mui/icons-material/DarkModeTwoTone';
 import Notifications from 'src/layouts/full/vertical/header/Notifications';
 import Cart from 'src/layouts/full/vertical/header/Cart';
 import Profile from 'src/layouts/full/vertical/header/Profile';
@@ -58,23 +60,94 @@ const Header = () => {
         {/* ------------------------------------------- */}
         {/* Search Dropdown */}
         {/* ------------------------------------------- */}
-        <Search />
-        {lgUp ? (
+        {/* <Search /> */}
+        {/* {lgUp ? (
           <>
             <Navigation />
           </>
-        ) : null}
+        ) : null} */}
+                <FormControl size="small" sx={{ minWidth: 120 }}>
+          <Select
+            displayEmpty
+            value={customizer.isHorizontal ? 'horizontal' : 'vertical'}
+            onChange={(e) => dispatch(toggleHorizontal(e.target.value === 'horizontal'))}
+            variant="standard"
+            disableUnderline
+            sx={{
+              fontSize: 14,
+              px: 1,
+              py: 0.5,
+              background: 'transparent',
+              boxShadow: 'none',
+              border: 'none',
+              '& fieldset': {
+                border: 'none',
+              },
+              '& .MuiSelect-select': {
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'flex-end',
+                gap: 1,
+                padding: 0,
+              },
+            }}
+          >
+            <MenuItem disabled value="">
+              Select Layout
+            </MenuItem>
+            <MenuItem value="vertical">
+              {/* <ViewComfyTwoTone fontSize="small" /> */}
+              Vertical
+            </MenuItem>
+            <MenuItem value="horizontal">
+              {/* <PaddingTwoTone fontSize="small" /> */}
+              Horizontal
+            </MenuItem>
+          </Select>
+        </FormControl>
         <Box flexGrow={1} />
         <Stack spacing={1} direction="row" alignItems="center">
-          <Language />
+          {/* <Language /> */}
           {/* ------------------------------------------- */}
           {/* Ecommerce Dropdown */}
           {/* ------------------------------------------- */}
-          <Cart />
+          {/* <Cart /> */}
           {/* ------------------------------------------- */}
           {/* End Ecommerce Dropdown */}
           {/* ------------------------------------------- */}
-          <Notifications />
+          {/* <Notifications /> */}
+            <Box display="flex" alignItems="center">
+            <FormControlLabel
+              control={
+                <Switch
+                  size="small"
+                  checked={customizer.activeMode === 'dark'}
+                  onChange={() =>
+                    dispatch(setDarkMode(customizer.activeMode === 'dark' ? 'light' : 'dark'))
+                  }
+                  color="default"
+                />
+              }
+              label={
+                <Box display="flex" alignItems="center" spacing={1}>
+                  {customizer.activeMode === 'dark' ? (
+                    <DarkModeTwoToneIcon color="primary" fontSize="small" />
+                  ) : (
+                    <WbSunnyTwoToneIcon color="primary" fontSize="small" />
+                  )}
+                </Box>
+              }
+              labelPlacement="start"
+              sx={{
+                m: 0,
+                pl: 1,
+                '& .MuiFormControlLabel-label': {
+                  display: 'flex',
+                  alignItems: 'center',
+                },
+              }}
+            />
+          </Box>
           <Profile />
         </Stack>
       </ToolbarStyled>

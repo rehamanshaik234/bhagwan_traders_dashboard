@@ -28,9 +28,12 @@ const NewCustomers = () => {
     fetchNewCustomers({ page: 1, limit: pagination.limit });
   }, []);
 
-  const applyFilter = () => {
-    fetchNewCustomers({ ...filters, page: 1, limit: pagination.limit });
-  };
+const applyFilter = () => {
+  const cleanedFilters = Object.fromEntries(
+    Object.entries(filters).filter(([_, v]) => v !== "")
+  );
+  fetchNewCustomers({ ...cleanedFilters, page: 1, limit: pagination.limit });
+};
 
   return (
     <>
@@ -106,10 +109,14 @@ const NewCustomers = () => {
                 page={pagination.page - 1}
                 rowsPerPage={pagination.limit}
                 rowsPerPageOptions={[5,10,25, {label:"All",value:-1}]}
-                onPageChange={(e, pg) => fetchNewCustomers({ ...filters, page: pg+1, limit: pagination.limit })}
+                onPageChange={(e, pg) => {
+                  const cleanedFilters = Object.fromEntries(Object.entries(filters).filter(([_, v]) => v !== ""));
+                  fetchNewCustomers({ ...cleanedFilters, page: pg + 1, limit: pagination.limit });
+                }}
                 onRowsPerPageChange={(e) => {
-                  const lim = parseInt(e.target.value,10);
-                  fetchNewCustomers({ ...filters, page: 1, limit: lim });
+                  const lim = parseInt(e.target.value, 10);
+                  const cleanedFilters = Object.fromEntries(Object.entries(filters).filter(([_, v]) => v !== ""));
+                  fetchNewCustomers({ ...cleanedFilters, page: 1, limit: lim });
                 }}
                 ActionsComponent={({count,page,rowsPerPage,onPageChange}) => (
                   <Box sx={{ flexShrink:0, ml:2.5 }}>

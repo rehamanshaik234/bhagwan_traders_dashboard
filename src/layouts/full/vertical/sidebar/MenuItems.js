@@ -65,7 +65,7 @@ const Menuitems = [
   },
   {
     id: uniqueId(),
-    title: 'eCommerce',
+    title: 'Dashboard',
     icon: IconShoppingCart,
     href: '/dashboards/ecommerce',
   },
@@ -197,13 +197,17 @@ const Menuitems = [
         icon: IconPoint,
         href: '/addUser',
       },
-      {
-        id: uniqueId(),
-        title: 'Roll Base Access',
-        icon: IconLockAccess,
-        href: '/pages/casl',
-      },
+      // {
+      //   id: uniqueId(),
+      //   title: 'Roll Base Access',
+      //   icon: IconLockAccess,
+      //   href: '/pages/casl',
+      // },
     ],
+  },
+    {
+    navlabel: true,
+    subheader: 'Settings',
   },
 
   {

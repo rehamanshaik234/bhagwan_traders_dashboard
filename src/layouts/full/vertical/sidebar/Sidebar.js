@@ -1,4 +1,4 @@
-import { useMediaQuery, Box, Drawer, useTheme } from '@mui/material';
+import { useMediaQuery, Box, Drawer, useTheme, Typography } from '@mui/material';
 import SidebarItems from './SidebarItems';
 import Logo from '../../shared/logo/Logo';
 import { useSelector, useDispatch } from 'react-redux';
@@ -74,6 +74,7 @@ const Sidebar = () => {
             {/* ------------------------------------------- */}
             <Box px={3}>
               <Logo />
+              {/* <Typography sx={{color: 'black', fontWeight: 'bold', p:1}}>BHAGWAN TRADERS</Typography> */}
             </Box>
             <Scrollbar sx={{ height: 'calc(100% - 190px)' }}>
               {/* ------------------------------------------- */}

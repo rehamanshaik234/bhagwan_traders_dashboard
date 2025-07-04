@@ -1,304 +1,157 @@
-import React from 'react';
-import { CardContent, Grid, Typography, MenuItem, Box, Avatar, Button, Stack } from '@mui/material';
-
-// components
+import React, { useEffect, useState } from 'react';
+import {
+  CardContent, Grid, Typography, MenuItem, Button, Stack, Snackbar
+} from '@mui/material';
+import axios from '../../../utils/axios';
 import BlankCard from '../../shared/BlankCard';
 import CustomTextField from '../../forms/theme-elements/CustomTextField';
 import CustomFormLabel from '../../forms/theme-elements/CustomFormLabel';
 import CustomSelect from '../../forms/theme-elements/CustomSelect';
 
-// images
-import user1 from 'src/assets/images/profile/user-1.jpg';
-
-// locations
-const locations = [
-  {
-    value: 'us',
-    label: 'United States',
-  },
-  {
-    value: 'uk',
-    label: 'United Kingdom',
-  },
-  {
-    value: 'india',
-    label: 'India',
-  },
-  {
-    value: 'russia',
-    label: 'Russia',
-  },
-];
-
-// currency
-const currencies = [
-  {
-    value: 'us',
-    label: 'US Dollar ($)',
-  },
-  {
-    value: 'uk',
-    label: 'United Kingdom (Pound)',
-  },
-  {
-    value: 'india',
-    label: 'India (INR)',
-  },
-  {
-    value: 'russia',
-    label: 'Russia (Ruble)',
-  },
+const roles = [
+  { value: 'admin', label: 'Admin' },
+  { value: 'manager', label: 'Manager' }
 ];
 
 const AccountTab = () => {
-  const [location, setLocation] = React.useState('india');
+  const [userId, setUserId] = useState(null);
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    role: ''
+  });
 
-  const handleChange1 = (event) => {
-    setLocation(event.target.value);
+  const [passwords, setPasswords] = useState({
+    current: '',
+    new: '',
+    confirm: ''
+  });
+
+  const [successMsg, setSuccessMsg] = useState('');
+  const [errorMsg, setErrorMsg] = useState('');
+
+  // Load user from token/localStorage
+  useEffect(() => {
+    const userInfo = JSON.parse(localStorage.getItem('authUser'));
+    if (userInfo && userInfo.id) {
+      setUserId(userInfo.id);
+      setFormData({
+        name: userInfo.name,
+        email: userInfo.email,
+        role: userInfo.role
+      });
+    } else {
+      setErrorMsg('User not authenticated');
+    }
+  }, []);
+
+  const handleChange = (field) => (e) => {
+    setFormData(prev => ({ ...prev, [field]: e.target.value }));
   };
 
-  //   currency
-  const [currency, setCurrency] = React.useState('india');
+  const handlePasswordChange = (field) => (e) => {
+    setPasswords(prev => ({ ...prev, [field]: e.target.value }));
+  };
 
-  const handleChange2 = (event) => {
-    setCurrency(event.target.value);
+  const handleSave = async () => {
+    try {
+      const res = await axios.put(`/user/updateUser/${userId}`, formData);
+      if (res.data.success) {
+        setSuccessMsg('User updated successfully');
+        localStorage.setItem('authUser', JSON.stringify({ ...formData, id: userId }));
+      } else {
+        setErrorMsg(res.data.message || 'Update failed');
+      }
+    } catch (err) {
+      setErrorMsg('Server error while updating');
+    }
+  };
+
+  const handleChangePassword = async () => {
+    if (passwords.new !== passwords.confirm) {
+      return setErrorMsg('New password and confirm password must match');
+    }
+
+    try {
+      const res = await axios.put(`/user/userChangePassword/${userId}`, {
+        currentPassword: passwords.current,
+        newPassword: passwords.new
+      });
+      if (res.data.success) {
+        setSuccessMsg('Password changed successfully');
+        setPasswords({ current: '', new: '', confirm: '' });
+      } else {
+        setErrorMsg(res.data.message || 'Password change failed');
+      }
+    } catch (err) {
+      setErrorMsg('Server error while changing password');
+    }
   };
 
   return (
     <Grid container spacing={3}>
-      {/* Change Profile */}
+      {/* Personal Details */}
       <Grid item xs={12} lg={6}>
         <BlankCard>
           <CardContent>
-            <Typography variant="h5" mb={1}>
-              Change Profile
-            </Typography>
-            <Typography color="textSecondary" mb={3}>Change your profile picture from here</Typography>
-            <Box textAlign="center" display="flex" justifyContent="center">
-              <Box>
-                <Avatar
-                  src={user1}
-                  alt={user1}
-                  sx={{ width: 120, height: 120, margin: '0 auto' }}
-                />
-                <Stack direction="row" justifyContent="center" spacing={2} my={3}>
-                  <Button variant="contained" color="primary" component="label">
-                    Upload
-                    <input hidden accept="image/*" multiple type="file" />
-                  </Button>
-                  <Button variant="outlined" color="error">
-                    Reset
-                  </Button>
-                </Stack>
-                <Typography variant="subtitle1" color="textSecondary" mb={4}>
-                  Allowed JPG, GIF or PNG. Max size of 800K
-                </Typography>
-              </Box>
-            </Box>
-          </CardContent>
-        </BlankCard>
-      </Grid>
-      {/*  Change Password */}
-      <Grid item xs={12} lg={6}>
-        <BlankCard>
-          <CardContent>
-            <Typography variant="h5" mb={1}>
-              Change Password
-            </Typography>
-            <Typography color="textSecondary" mb={3}>To change your password please confirm here</Typography>
+            <Typography variant="h5" mb={1}>Personal Details</Typography>
+            <Typography color="textSecondary" mb={3}>Edit your personal details</Typography>
             <form>
-              <CustomFormLabel
-                sx={{
-                  mt: 0,
-                }}
-                htmlFor="text-cpwd"
-              >
-                Current Password
-              </CustomFormLabel>
-              <CustomTextField
-                id="text-cpwd"
-                value="MathewAnderson"
-                variant="outlined"
-                fullWidth
-                type="password"
-              />
-              {/* 2 */}
-              <CustomFormLabel htmlFor="text-npwd">New Password</CustomFormLabel>
-              <CustomTextField
-                id="text-npwd"
-                value="MathewAnderson"
-                variant="outlined"
-                fullWidth
-                type="password"
-              />
-              {/* 3 */}
-              <CustomFormLabel htmlFor="text-conpwd">Confirm Password</CustomFormLabel>
-              <CustomTextField
-                id="text-conpwd"
-                value="MathewAnderson"
-                variant="outlined"
-                fullWidth
-                type="password"
-              />
-            </form>
-          </CardContent>
-        </BlankCard>
-      </Grid>
-      {/* Edit Details */}
-      <Grid item xs={12}>
-        <BlankCard>
-          <CardContent>
-            <Typography variant="h5" mb={1}>
-              Personal Details
-            </Typography>
-            <Typography color="textSecondary" mb={3}>To change your personal detail , edit and save from here</Typography>
-            <form>
-              <Grid container spacing={3}>
-                <Grid item xs={12} sm={6}>
-                  <CustomFormLabel
-                    sx={{
-                      mt: 0,
-                    }}
-                    htmlFor="text-name"
-                  >
-                    Your Name
-                  </CustomFormLabel>
-                  <CustomTextField
-                    id="text-name"
-                    value="Mathew Anderson"
-                    variant="outlined"
-                    fullWidth
-                  />
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  {/* 2 */}
-                  <CustomFormLabel
-                    sx={{
-                      mt: 0,
-                    }}
-                    htmlFor="text-store-name"
-                  >
-                    Store Name
-                  </CustomFormLabel>
-                  <CustomTextField
-                    id="text-store-name"
-                    value="Maxima Studio"
-                    variant="outlined"
-                    fullWidth
-                  />
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  {/* 3 */}
-                  <CustomFormLabel
-                    sx={{
-                      mt: 0,
-                    }}
-                    htmlFor="text-location"
-                  >
-                    Location
-                  </CustomFormLabel>
-                  <CustomSelect
-                    fullWidth
-                    id="text-location"
-                    variant="outlined"
-                    value={location}
-                    onChange={handleChange1}
-                  >
-                    {locations.map((option) => (
-                      <MenuItem key={option.value} value={option.value}>
-                        {option.label}
-                      </MenuItem>
-                    ))}
-                  </CustomSelect>
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  {/* 4 */}
-                  <CustomFormLabel
-                    sx={{
-                      mt: 0,
-                    }}
-                    htmlFor="text-currency"
-                  >
-                    Currency
-                  </CustomFormLabel>
-                  <CustomSelect
-                    fullWidth
-                    id="text-currency"
-                    variant="outlined"
-                    value={currency}
-                    onChange={handleChange2}
-                  >
-                    {currencies.map((option) => (
-                      <MenuItem key={option.value} value={option.value}>
-                        {option.label}
-                      </MenuItem>
-                    ))}
-                  </CustomSelect>
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  {/* 5 */}
-                  <CustomFormLabel
-                    sx={{
-                      mt: 0,
-                    }}
-                    htmlFor="text-email"
-                  >
-                    Email
-                  </CustomFormLabel>
-                  <CustomTextField
-                    id="text-email"
-                    value="info@modernize.com"
-                    variant="outlined"
-                    fullWidth
-                  />
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  {/* 6 */}
-                  <CustomFormLabel
-                    sx={{
-                      mt: 0,
-                    }}
-                    htmlFor="text-phone"
-                  >
-                    Phone
-                  </CustomFormLabel>
-                  <CustomTextField
-                    id="text-phone"
-                    value="+91 12345 65478"
-                    variant="outlined"
-                    fullWidth
-                  />
+              <Grid container spacing={2}>
+                <Grid item xs={12}>
+                  <CustomFormLabel htmlFor="name">Your Name</CustomFormLabel>
+                  <CustomTextField id="name" value={formData.name} onChange={handleChange('name')} fullWidth />
                 </Grid>
                 <Grid item xs={12}>
-                  {/* 7 */}
-                  <CustomFormLabel
-                    sx={{
-                      mt: 0,
-                    }}
-                    htmlFor="text-address"
-                  >
-                    Address
-                  </CustomFormLabel>
-                  <CustomTextField
-                    id="text-address"
-                    value="814 Howard Street, 120065, India"
-                    variant="outlined"
-                    fullWidth
-                  />
+                  <CustomFormLabel htmlFor="role">Role</CustomFormLabel>
+                  <CustomSelect id="role" value={formData.role} onChange={handleChange('role')} fullWidth>
+                    {roles.map(role => (
+                      <MenuItem key={role.value} value={role.value}>{role.label}</MenuItem>
+                    ))}
+                  </CustomSelect>
+                </Grid>
+                <Grid item xs={12}>
+                  <CustomFormLabel htmlFor="email">Email</CustomFormLabel>
+                  <CustomTextField id="email" value={formData.email} onChange={handleChange('email')} fullWidth />
                 </Grid>
               </Grid>
             </form>
           </CardContent>
         </BlankCard>
-        <Stack direction="row" spacing={2} sx={{ justifyContent: 'end' }} mt={3}>
-          <Button size="large" variant="contained" color="primary">
-            Save
-          </Button>
-          <Button size="large" variant="text" color="error">
-            Cancel
-          </Button>
+      </Grid>
+
+      {/* Password Section */}
+      <Grid item xs={12} lg={6}>
+        <BlankCard>
+          <CardContent>
+            <Typography variant="h5" mb={1}>Change Password</Typography>
+            <Typography color="textSecondary" mb={3}>Change your password</Typography>
+            <form>
+              <CustomFormLabel htmlFor="current">Current Password</CustomFormLabel>
+              <CustomTextField id="current" type="password" value={passwords.current} onChange={handlePasswordChange('current')} fullWidth />
+              <CustomFormLabel htmlFor="new">New Password</CustomFormLabel>
+              <CustomTextField id="new" type="password" value={passwords.new} onChange={handlePasswordChange('new')} fullWidth />
+              <CustomFormLabel htmlFor="confirm">Confirm Password</CustomFormLabel>
+              <CustomTextField id="confirm" type="password" value={passwords.confirm} onChange={handlePasswordChange('confirm')} fullWidth />
+              <Stack mt={2}>
+                <Button variant="outlined" color="primary" onClick={handleChangePassword}>Save Password</Button>
+              </Stack>
+            </form>
+          </CardContent>
+        </BlankCard>
+      </Grid>
+
+      {/* Save Button */}
+      <Grid item xs={12}>
+        <Stack direction="row" spacing={2} justifyContent="end" mt={3}>
+          <Button size="large" variant="contained" color="primary" onClick={handleSave}>Save</Button>
+          {/* <Button size="large" variant="text" color="error">Cancel</Button> */}
         </Stack>
       </Grid>
+
+      {/* Toasts */}
+      <Snackbar open={!!successMsg} autoHideDuration={3000} onClose={() => setSuccessMsg('')} message={successMsg} anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}/>
+      <Snackbar open={!!errorMsg} autoHideDuration={3000} onClose={() => setErrorMsg('')} message={errorMsg} anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}/>
     </Grid>
   );
 };
