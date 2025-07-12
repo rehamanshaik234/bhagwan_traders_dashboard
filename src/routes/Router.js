@@ -45,6 +45,17 @@ const DeliveredOrders = Loadable(lazy(() => import('../views/apps/manageOrders/D
 const DisableProduct = Loadable(lazy(() => import('../views/apps/inventory/DisableProduct')));
 const UpdateQuantity = Loadable(lazy(() => import('../views/apps/inventory/UpdateQuantity')));
 const ManageProducts = Loadable(lazy(() => import('../views/apps/inventory/ManageProducts')));
+const AddProducts = Loadable(lazy(() => import('../views/apps/inventory/AddProduct')));
+
+/*** Category ***/
+const AddCategory = Loadable(lazy(() => import('../views/apps/category/AddCategory')));
+const AllCategories = Loadable(lazy(() => import('../views/apps/category/AllCategories')));
+
+/*** Sub Category ***/
+const AddSubCategory = Loadable(lazy(() => import('../views/apps/subCategory/AddSubCategory')));
+const AllSubCategories = Loadable(lazy(() => import('../views/apps/subCategory/AllSubCategories')));
+
+
 
 /***Sales***/
 const AmountSales = Loadable(lazy(() => import('../views/apps/sales/AmountSales')));
@@ -158,8 +169,13 @@ const Router = [
       { path: '/dispatchedOrders', element: <DispatchedOrders /> },
       { path: '/deliveredOrders', element: <DeliveredOrders /> },
       { path: '/manageProducts', element: <ManageProducts /> },
+      { path: '/addProducts', element: <AddProducts /> },
       { path: '/updateQuantity', element: <UpdateQuantity /> },
       { path: '/disableProduct', element: <DisableProduct /> },
+      { path: '/addCategory', element: <AddCategory /> },
+      { path: '/allCategories', element: <AllCategories /> },
+      { path: '/addSubCategory', element: <AddSubCategory /> },
+      { path: '/allSubCategories', element: <AllSubCategories /> },
       { path: '/amountSales', element: <AmountSales /> },
       { path: '/productSales', element: <ProductSales /> },
       { path: '/createOffer', element: <CreateOffer /> },

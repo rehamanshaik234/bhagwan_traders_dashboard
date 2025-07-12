@@ -99,6 +99,46 @@ const Menuitems = [
       },
     ],
   },
+    {
+    id: uniqueId(),
+    title: 'Categories',
+    icon: IconForklift,
+    href: '/apps/ecommerce/detail/1',
+    children: [
+      {
+        id: uniqueId(),
+        title: 'Add Categories',
+        icon: IconPoint,
+        href: '/addCategory',
+      },
+      {
+        id: uniqueId(),
+        title: 'All Categories',
+        icon: IconPoint,
+        href: '/allCategories',
+      },
+    ],
+  },
+  {
+    id: uniqueId(),
+    title: 'Sub Categories',
+    icon: IconForklift,
+    href: '/apps/ecommerce/detail/1',
+    children: [
+      {
+        id: uniqueId(),
+        title: 'Add Sub Categories',
+        icon: IconPoint,
+        href: '/addSubCategory',
+      },
+      {
+        id: uniqueId(),
+        title: 'All Sub Categories',
+        icon: IconPoint,
+        href: '/allSubCategories',
+      },
+    ],
+  },
   {
     id: uniqueId(),
     title: 'Inventory',
@@ -107,7 +147,13 @@ const Menuitems = [
     children: [
       {
         id: uniqueId(),
-        title: 'Add/Edit products',
+        title: 'Add products',
+        icon: IconPoint,
+        href: '/addProducts',
+      },
+      {
+        id: uniqueId(),
+        title: 'Update products',
         icon: IconPoint,
         href: '/manageProducts',
       },

@@ -76,6 +76,40 @@ export const useInventory = () => {
     }
   };
 
+
+  const addProduct = async (id, data) => {
+    try {
+      const url = "/products/addProduct";
+      const method = "post";
+      const response = await axios[method](url, data);
+
+      if (!response.data.success) {
+        throw new Error(response.data.message || "Failed to save product");
+      }
+    } catch (error) {
+      console.error("Add/Edit error:", error);
+      throw error;
+    }
+  };
+
+  const addNewProductWithImages = async (formData) => {
+    try {
+      const response = await axios.post("/products/addProduct", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      if (!response.data.status) {
+        throw new Error(response.data.error || "Failed to add product");
+      }
+      return response.data;
+    } catch (error) {
+      console.error("Error adding product with images:", error);
+      throw error;
+    }
+  };
+
+
   return {
     getProducts,
     updateStock,
@@ -84,6 +118,8 @@ export const useInventory = () => {
     getCategories,
     categories,
     addOrEditProduct,
+    addProduct,
+    addNewProductWithImages,
     getBrands,
     brands,
     enableProduct,
