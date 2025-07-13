@@ -1,6 +1,6 @@
 // Updated useInventory.js with getCategories function
 import { useDispatch, useSelector } from "react-redux";
-import { setProducts, setLoading, setCategories } from "../../store/apps/inventory/inventorySlice";
+import { setProducts, setLoading, setCategories, setMeta } from "../../store/apps/inventory/inventorySlice";
 import axios from "../../utils/axios";
 import { useState } from "react";
 
@@ -9,15 +9,18 @@ export const useInventory = () => {
   const products = useSelector((state) => state.inventory.products) || [];
   const categories = useSelector((state) => state.inventory.categories);
   const loading = useSelector((state) => state.inventory.loading);
+  const { meta } = useSelector((state) => state.inventory);
   const [brands, setBrands] = useState([]);
-
-  const getProducts = async (filters = {}) => {
-    try {
-      dispatch(setLoading(true));
-      const query = new URLSearchParams(filters).toString();
-      const response = await axios.get(`/products/getProducts?${query}`);
-      if (response.data.success) {
-        dispatch(setProducts(response.data.result || []));
+    
+    const getProducts = async (filters = {}) => {
+      try {
+        dispatch(setLoading(true));
+        const query = new URLSearchParams(filters).toString();
+        const response = await axios.get(`/products/allProducts?${query}`);
+        console.log(response.data.meta)
+        if (response.data.success) {
+          dispatch(setProducts(response.data.data || []));
+          dispatch(setMeta(response.data.meta));
       }
     } catch (error) {
       console.error("Error fetching products:", error);
@@ -37,8 +40,9 @@ export const useInventory = () => {
 
   const getCategories = async () => {
     try {
-      const response = await axios.get('/category/getAll');
-      if (response.data.success) {
+      const response = await axios.get('/categories/getAll');
+      console.log(response)
+      if (response.data.status) {
         dispatch(setCategories(response.data.data));
       }
     } catch (error) {
@@ -46,7 +50,7 @@ export const useInventory = () => {
     }
   };
 
-    const addOrEditProduct = async (id, data) => {
+  const addOrEditProduct = async (id, data) => {
     try {
       const url = id ? `/products/editProduct/${id}` : "/products/addProduct";
       const method = id ? "put" : "post";
@@ -66,7 +70,7 @@ export const useInventory = () => {
     if (res.data.success) setBrands(res.data.data);
   };
 
-    const enableProduct = async (id) => {
+  const enableProduct = async (id) => {
     try {
       const res = await axios.put(`/products/enableProduct/${id}`);
       return res.data;
@@ -122,6 +126,7 @@ export const useInventory = () => {
     addNewProductWithImages,
     getBrands,
     brands,
+    meta,
     enableProduct,
   };
 };

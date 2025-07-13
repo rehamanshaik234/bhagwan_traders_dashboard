@@ -10,7 +10,7 @@ export const useCustomers = () => {
     dispatch(setLoadingNew(true));
     try {
       const query = new URLSearchParams(filters).toString();
-      const res = await axios.get(`/customers/new${query ? "?" + query : ""}`);
+      const res = await axios.get(`/customer/new${query ? "?" + query : ""}`);
       if (res.data.success) {
         dispatch(setNewCustomers(res.data));
       }
@@ -24,7 +24,7 @@ export const useCustomers = () => {
   const fetchDailyStats = async (days = 30) => {
     dispatch(setLoadingStats(true));
     try {
-      const res = await axios.get(`/customers/stats/daily`, { params: { days } });
+      const res = await axios.get(`/customer/stats/daily`, { params: { days } });
       dispatch(setDailyStats(res.data.data || []));
     } catch (err) {
       console.error("Error fetching daily stats:", err);
@@ -36,7 +36,7 @@ export const useCustomers = () => {
   const fetchMonthlyStats = async () => {
     dispatch(setLoadingStats(true));
     try {
-      const res = await axios.get(`/customers/stats/monthly`);
+      const res = await axios.get(`/customer/stats/monthly`);
       dispatch(setMonthlyStats(res.data.data || []));
     } catch (err) {
       console.error("Error fetching monthly stats:", err);
@@ -47,7 +47,7 @@ export const useCustomers = () => {
 
   const exportStats = async () => {
     try {
-      const res = await axios.get(`/customers/stats/export`, {
+      const res = await axios.get(`/customer/stats/export`, {
         responseType: "blob",
       });
 

@@ -18,6 +18,7 @@ import {
 import Breadcrumb from '../../../layouts/full/shared/breadcrumb/Breadcrumb';
 import { useSubCategory } from '../../../hooks/subCategory/useSubCategory';
 import { useCategory } from '../../../hooks/category/useCategory';
+import { useNavigate } from 'react-router';
 
 const BCrumb = [
   { to: '/', title: 'Home' },
@@ -27,6 +28,7 @@ const BCrumb = [
 const AllSubCategory = () => {
   const { getAllSubCategories, getSubCategoryById, getSubCategoryByCategoryId } = useSubCategory();
   const { getAllCategories } = useCategory();
+  const navigate = useNavigate();
 
   const [subCategories, setSubCategories] = useState([]);
   const [allSubCategoryOptions, setAllSubCategoryOptions] = useState([]);
@@ -101,8 +103,18 @@ const AllSubCategory = () => {
             gap: 2,
             alignItems: 'center',
             flexWrap: 'wrap',
+            justifyContent: 'space-between'
           }}
         >
+          <Box
+          sx={{
+            mb: 3,
+            display: 'flex',
+            gap: 2,
+            alignItems: 'center',
+            flexWrap: 'wrap',
+          }}
+          >
           {/* Filter by Category */}
           <TextField
             label="Filter by Category"
@@ -140,6 +152,16 @@ const AllSubCategory = () => {
           <Button variant="outlined" onClick={handleReset}>
             Reset
           </Button>
+          </Box>
+          <Box>
+            <Button 
+            variant="outlined"               
+            onClick={() => {
+                navigate("/addSubCategory")
+              }}>
+              Add Sub Category
+            </Button>
+          </Box>
         </Box>
 
         {/* Table */}

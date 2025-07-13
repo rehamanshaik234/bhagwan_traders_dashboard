@@ -105,64 +105,70 @@ const Menuitems = [
     icon: IconForklift,
     href: '/apps/ecommerce/detail/1',
     children: [
+      // {
+      //   id: uniqueId(),
+      //   title: 'Add Categories',
+      //   icon: IconPoint,
+      //   href: '/addCategory',
+      // },
       {
         id: uniqueId(),
-        title: 'Add Categories',
-        icon: IconPoint,
-        href: '/addCategory',
-      },
-      {
-        id: uniqueId(),
-        title: 'All Categories',
+        title: 'Categories',
         icon: IconPoint,
         href: '/allCategories',
       },
-    ],
-  },
-  {
-    id: uniqueId(),
-    title: 'Sub Categories',
-    icon: IconForklift,
-    href: '/apps/ecommerce/detail/1',
-    children: [
-      {
+            {
         id: uniqueId(),
-        title: 'Add Sub Categories',
-        icon: IconPoint,
-        href: '/addSubCategory',
-      },
-      {
-        id: uniqueId(),
-        title: 'All Sub Categories',
+        title: 'Sub Categories',
         icon: IconPoint,
         href: '/allSubCategories',
       },
     ],
   },
+  // {
+  //   id: uniqueId(),
+  //   title: 'Sub Categories',
+  //   icon: IconForklift,
+  //   href: '/apps/ecommerce/detail/1',
+  //   children: [
+  //     {
+  //       id: uniqueId(),
+  //       title: 'Add Sub Categories',
+  //       icon: IconPoint,
+  //       href: '/addSubCategory',
+  //     },
+  //     {
+  //       id: uniqueId(),
+  //       title: 'All Sub Categories',
+  //       icon: IconPoint,
+  //       href: '/allSubCategories',
+  //     },
+  //   ],
+  // },
   {
     id: uniqueId(),
     title: 'Inventory',
     icon: IconForklift,
     href: '/apps/ecommerce/detail/1',
     children: [
+      // {
+      //   id: uniqueId(),
+      //   title: 'Add products',
+      //   icon: IconPoint,
+      //   href: '/addProducts',
+      // },
       {
         id: uniqueId(),
-        title: 'Add products',
-        icon: IconPoint,
-        href: '/addProducts',
-      },
-      {
-        id: uniqueId(),
-        title: 'Update products',
+        title: 'Products',
         icon: IconPoint,
         href: '/manageProducts',
       },
-      {
-        id: uniqueId(),
-        title: 'Update Quantity',
-        icon: IconPoint,
-        href: '/updateQuantity',
-      },
+      // {
+      //   id: uniqueId(),
+      //   title: 'Update Quantity',
+      //   icon: IconPoint,
+      //   href: '/updateQuantity',
+      // },
       {
         id: uniqueId(),
         title: 'Disable product',

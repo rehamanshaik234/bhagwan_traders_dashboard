@@ -18,7 +18,7 @@ export const useSubCategory = () => {
   };
 
   const addSubCategory = async (formData) => {
-    const response = await axios.post('https://materialmart.shop/materialmartapi/subcategories/addSubCategory', formData, {
+    const response = await axiosInstance.post('/subcategories/addSubCategory', formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
     });
     return response.data;

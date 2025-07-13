@@ -23,7 +23,7 @@ import {
 
 const BCrumb = [
   { to: '/', title: 'Home' },
-  { to: '/inventory/manage-product', title: 'Manage Product' },
+  { to: '/manageProducts', title: 'Product' },
   { title: 'Add Product' },
 ];
 
@@ -84,16 +84,16 @@ const AddProduct = () => {
         });
 
         if (res.data.status) {
-        toast.success("Product added successfully");
+        setSnackbar({ open: true, message: 'Product added successfully' });
 
         resetForm(); // ✅ Reset Formik
         setPreviewImages([]); // ✅ Clear previews
         if (fileInputRef.current) fileInputRef.current.value = ""; // ✅ Clear input
         } else {
-        toast.error(res.data.error || "Failed to add product");
+        setSnackbar({ open: true, message: 'Failed to add product' });
         }
     } catch (err) {
-        toast.error("Error while adding product");
+        setSnackbar({ open: true, message: '"Error while adding product"' });
     }
     }
   });
@@ -207,49 +207,74 @@ const AddProduct = () => {
             </Grid>
 
             <Grid item xs={12}>
-            <Button variant="outlined" component="label">
-                Upload Product Images
-                <input
-                ref={fileInputRef}
-                hidden
-                multiple
-                accept="image/*"
-                type="file"
-                name="files"
-                onChange={(e) => {
-                    const files = Array.from(e.target.files);
-
-                    // ✅ Update Formik for backend submission
-                    formik.setFieldValue("files", files);
-
-                    // ✅ Generate local preview URLs
-                    const previews = files.map((file) => URL.createObjectURL(file));
-                    setPreviewImages(previews);
-                }}
-                />
-            </Button>
-            </Grid>
-
-            <Grid item xs={12}>
-            <Box display="flex" flexWrap="wrap" gap={2}>
+              <Box display="flex" flexWrap="wrap" gap={2}>
                 {previewImages.map((src, idx) => (
-                <Box key={idx}>
+                  <Box key={idx} position="relative" display="inline-block">
                     <img
-                    src={src}
-                    alt={`Preview ${idx}`}
-                    style={{
+                      src={src}
+                      alt={`Preview ${idx}`}
+                      style={{
                         width: 80,
                         height: 80,
                         objectFit: "cover",
                         borderRadius: 8,
                         border: "1px solid #ccc",
-                    }}
+                      }}
                     />
-                </Box>
+                    <Button
+                      size="small"
+                      onClick={() => {
+                        const newPreviews = previewImages.filter((_, i) => i !== idx);
+                        const newFiles = files.filter((_, i) => i !== idx);
+                        setPreviewImages(newPreviews);
+                        setFiles(newFiles);
+                        formik.setFieldValue('files', newFiles);
+                      }}
+                      sx={{
+                        minWidth: 0,
+                        padding: 0,
+                        position: "absolute",
+                        top: -8,
+                        right: -8,
+                        backgroundColor: "#fff",
+                        border: "1px solid #ccc",
+                        borderRadius: "50%",
+                        zIndex: 2,
+                        lineHeight: 1,
+                      }}
+                    >
+                      ✕
+                    </Button>
+                  </Box>
                 ))}
-            </Box>
+              </Box>
             </Grid>
 
+            <Grid item xs={12}>
+              <Button variant="outlined" component="label">
+                Upload Product Images
+                <input
+                  ref={fileInputRef}
+                  hidden
+                  multiple
+                  accept="image/*"
+                  type="file"
+                  name="files"
+                  onChange={(e) => {
+                    const newFiles = Array.from(e.target.files);
+                    const updatedFiles = [...files, ...newFiles];
+                    const updatedPreviews = [
+                      ...previewImages,
+                      ...newFiles.map((file) => URL.createObjectURL(file)),
+                    ];
+
+                    setFiles(updatedFiles);
+                    setPreviewImages(updatedPreviews);
+                    formik.setFieldValue("files", updatedFiles);
+                  }}
+                />
+              </Button>
+            </Grid>
 
             <Grid item xs={12}>
               <Button type="submit" variant="contained">

@@ -15,6 +15,7 @@ import { useCategory } from "../../../hooks/category/useCategory";
 
 const BCrumb = [
   { to: "/", title: "Home" },
+  { to: "/allCategories", title: "Categories" },
   { title: "Add Category" },
 ];
 
@@ -106,8 +107,57 @@ const AddCategory = () => {
               />
             </Grid>
 
+            {preview && (
+              <Grid item xs={12}>
+                <Box mt={1} position="relative" display="inline-block">
+                  <img
+                    src={preview}
+                    alt="Preview"
+                    style={{
+                      width: 100,
+                      height: 100,
+                      objectFit: "cover",
+                      borderRadius: 8,
+                      border: "1px solid #ccc",
+                    }}
+                  />
+                  <Button
+                    size="small"
+                    onClick={() => {
+                      setPreview(null);
+                      formik.setFieldValue("file", null);
+                      if (fileInputRef.current) fileInputRef.current.value = "";
+                    }}
+                    sx={{
+                      minWidth: 0,
+                      padding: 0,
+                      position: "absolute",
+                      top: -8,
+                      right: -8,
+                      backgroundColor: "#fff",
+                      border: "1px solid #ccc",
+                      borderRadius: "50%",
+                      lineHeight: 1,
+                      zIndex: 2,
+                    }}
+                  >
+                    ✕
+                  </Button>
+                </Box>
+              </Grid>
+            )}
+
             <Grid item xs={12}>
-              <Button variant="outlined" component="label">
+              <Button
+                variant="outlined"
+                component="label"
+                sx={{
+                  ":hover": {
+                    backgroundColor: "#b9b9b9ff",
+                    borderColor: "#b9b9b9ff",
+                  },
+                }}
+              >
                 Upload Image
                 <input
                   ref={fileInputRef}
@@ -124,17 +174,6 @@ const AddCategory = () => {
               )}
             </Grid>
 
-            {preview && (
-              <Grid item xs={12}>
-                <Box mt={1}>
-                  <img
-                    src={preview}
-                    alt="Preview"
-                    style={{ width: 100, height: 100, objectFit: "cover", borderRadius: 8 }}
-                  />
-                </Box>
-              </Grid>
-            )}
 
             <Grid item xs={12}>
               <Button type="submit" variant="contained" color="primary">

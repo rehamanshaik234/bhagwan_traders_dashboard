@@ -25,6 +25,7 @@ import {
   Snackbar,
   Alert,
   Chip,
+  Typography,
 } from "@mui/material";
 import FirstPageIcon from "@mui/icons-material/FirstPage";
 import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
@@ -33,6 +34,8 @@ import LastPageIcon from "@mui/icons-material/LastPage";
 import { useTheme } from "@mui/material/styles";
 import Breadcrumb from "../../../layouts/full/shared/breadcrumb/Breadcrumb";
 import { useInventory } from "../../../hooks/inventory/useInventory";
+import { useNavigate } from "react-router";
+import { useSelector } from "react-redux";
 
 function TablePaginationActions({ count, page, rowsPerPage, onPageChange }) {
   const theme = useTheme();
@@ -85,7 +88,6 @@ const ManageProduct = () => {
   });
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
-
   const [modalOpen, setModalOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
   const [formData, setFormData] = useState({
@@ -98,25 +100,31 @@ const ManageProduct = () => {
   });
   const [submitting, setSubmitting] = useState(false);
   const [toast, setToast] = useState({ open: false, type: "success", message: "" });
+  const [selectedProduct, setSelectedProduct] = useState(null);
+  const { meta } = useSelector((state) => state.inventory);
 
-  // Initial load
+  const navigate = useNavigate();
+
   useEffect(() => {
-    getProducts();
     getCategories();
     getBrands();
   }, []);
 
-  const openAddModal = () => {
-    setEditingProduct(null);
-    setFormData({
-      name: "",
-      description: "",
-      price: "",
-      stock: "",
-      brand_id: "",
-      category_id: "",
+  useEffect(() => {
+    fetchProductList();
+  }, [filters, page, rowsPerPage]);
+
+  const fetchProductList = () => {
+    const activeFilters = Object.fromEntries(
+      Object.entries(filters).filter(([_, v]) => v !== "")
+    );
+    getProducts({
+      ...activeFilters,
+      page: page + 1,
+      limit: rowsPerPage,
+      sort: "p.created_at",
+      order: "desc",
     });
-    setModalOpen(true);
   };
 
   const openEditModal = (prod) => {
@@ -132,7 +140,11 @@ const ManageProduct = () => {
     setModalOpen(true);
   };
 
-  const handleSubmit = async () => {
+  const handleViewProduct = (product) => {
+    setSelectedProduct(product);
+  };
+
+    const handleSubmit = async () => {
     setSubmitting(true);
     try {
       await addOrEditProduct(editingProduct?.id, formData);
@@ -143,6 +155,7 @@ const ManageProduct = () => {
       });
       setModalOpen(false);
       getProducts(filters);
+      fetchProductList()
     } catch (err) {
       setToast({ open: true, type: "error", message: err.message });
     } finally {
@@ -150,20 +163,11 @@ const ManageProduct = () => {
     }
   };
 
-  const handleApplyFilter = () => {
-  // Remove empty filters
-  const activeFilters = Object.fromEntries(
-    Object.entries(filters).filter(([_, v]) => v !== "")
-  );
-  getProducts(activeFilters);
-};
-
   return (
     <>
       <Breadcrumb title="Manage Products" items={BCrumb} />
 
-      {/* Filters and Add Button */}
-      <Box display="flex" justifyContent={"space-between"} flexWrap="wrap">
+      <Box display="flex" justifyContent="space-between" flexWrap="wrap">
         <Box display="flex" flexWrap="wrap" gap={2} mb={2}>
           <TextField
             label="Name"
@@ -180,7 +184,7 @@ const ManageProduct = () => {
               onChange={(e) => setFilters({ ...filters, brand_id: e.target.value })}
             >
               <MenuItem value="">All</MenuItem>
-            {brands.map((b) => (
+              {brands.map((b) => (
                 <MenuItem key={b.id} value={b.id}>{b.name}</MenuItem>
               ))}
             </Select>
@@ -195,9 +199,7 @@ const ManageProduct = () => {
             >
               <MenuItem value="">All</MenuItem>
               {categories.map((cat) => (
-                <MenuItem key={cat.id} value={cat.id}>
-                  {cat.name}
-                </MenuItem>
+                <MenuItem key={cat.id} value={cat.id}>{cat.name}</MenuItem>
               ))}
             </Select>
           </FormControl>
@@ -214,75 +216,52 @@ const ManageProduct = () => {
               <MenuItem value="0">Disabled</MenuItem>
             </Select>
           </FormControl>
-          <Box display="flex" alignItems="center" gap={1}>
-            <Button
-              variant="contained"
-              onClick={handleApplyFilter}
-              disabled={loading}
-            >
-              Apply Filter
-            </Button>
-          </Box>
         </Box>
         <Box mb={2}>
-            <Button variant="outlined" onClick={openAddModal}>
-              Add Product
-            </Button>
+          <Button variant="contained" onClick={() => navigate("/addProducts")}>Add Product</Button>
         </Box>
       </Box>
 
-      {/* Product Table */}
       <Paper variant="outlined">
         <TableContainer>
-          <Table sx={{ whiteSpace: "nowrap" }}>
+          <Table sx={{ minWidth: 1000 }}>
             <TableHead>
-              <TableRow sx={{ backgroundColor: '#f5f5f5' }}>
-                <TableCell>Name</TableCell>
-                <TableCell>Category</TableCell>
-                <TableCell>Price</TableCell>
-                <TableCell>Stock</TableCell>
-                <TableCell>Status</TableCell>
-                <TableCell>Actions</TableCell>
+              <TableRow>
+                {["Image", "Name", "Category", "Price", "Stock", "Status", "Actions"].map((head) => (
+                  <TableCell key={head} align="center" sx={{ fontWeight: 600 }}>{head}</TableCell>
+                ))}
               </TableRow>
             </TableHead>
             <TableBody>
-              {(rowsPerPage > 0
-                  ? (products || []).slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                  : (products || [])
-                ).map((prod) => {
-                const cat = categories.find((c) => c.id === prod.category_id);
-                return (
-                  <TableRow key={prod.id}>
-                    <TableCell>{prod.name}</TableCell>
-                    <TableCell>{cat ? cat.name : "-"}</TableCell>
-                    <TableCell>{prod.price}</TableCell>
-                    <TableCell>{prod.stock}</TableCell>
-                    <TableCell>
-                      <Chip
-                        label={prod.is_active ? "Active" : "Disabled"}
-                        color={prod.is_active ? "success" : "default"}
-                        size="small"
-                      />
-                    </TableCell>
-                    <TableCell>
-                      <Button variant="outlined" size="small" onClick={() => openEditModal(prod)}>
-                        Edit
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                );
-              })}
+              {products.map((prod) => (
+                <TableRow key={prod.id}>
+                  <TableCell align="center">
+                    <img src={prod.image_urls?.[0] || "/no-image.png"} alt={prod.name} width={40} height={40} style={{ borderRadius: 4, objectFit: "cover" }} />
+                  </TableCell>
+                  <TableCell align="center">{prod.name}</TableCell>
+                  <TableCell align="center">{prod.category?.name || "-"}</TableCell>
+                  <TableCell align="center">₹{prod.price}</TableCell>
+                  <TableCell align="center">{prod.stock}</TableCell>
+                  <TableCell align="center">
+                    <Chip label={prod.is_active ? "Active" : "Disabled"} color={prod.is_active ? "success" : "default"} size="small" />
+                  </TableCell>
+                  <TableCell align="center">
+                    <Box display="flex" gap={1} justifyContent="center">
+                      <Button variant="outlined" size="small" onClick={() => handleViewProduct(prod)}>View</Button>
+                      <Button variant="outlined" size="small" onClick={() => openEditModal(prod)}>Edit</Button>
+                    </Box>
+                  </TableCell>
+                </TableRow>
+              ))}
             </TableBody>
             <TableFooter>
               <TableRow>
                 <TablePagination
-                  rowsPerPageOptions={[5, 10, 25, { label: "All", value: -1 }]}
-                  colSpan={6}
-                  count={products.length}
+                  rowsPerPageOptions={[5, 10, 25]}
+                  count={meta.total}
                   rowsPerPage={rowsPerPage}
                   page={page}
-                  SelectProps={{ native: true }}
-                  onPageChange={(e, p) => setPage(p)}
+                  onPageChange={(e, newPage) => setPage(newPage)}
                   onRowsPerPageChange={(e) => {
                     setRowsPerPage(parseInt(e.target.value, 10));
                     setPage(0);
@@ -295,8 +274,7 @@ const ManageProduct = () => {
         </TableContainer>
       </Paper>
 
-      {/* Add/Edit Modal */}
-      <Dialog open={modalOpen} onClose={() => !submitting && setModalOpen(false)} fullWidth maxWidth="sm">
+        <Dialog open={modalOpen} onClose={() => !submitting && setModalOpen(false)} fullWidth maxWidth="sm">
         <DialogTitle>{editingProduct ? "Edit Product" : "Add Product"}</DialogTitle>
         <DialogContent dividers>
           <Box display="flex" flexDirection="column" gap={2}>
@@ -350,6 +328,69 @@ const ManageProduct = () => {
           <Button onClick={handleSubmit} disabled={submitting} variant="contained">
             {submitting ? <CircularProgress size={24} /> : "Save"}
           </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog
+        open={!!selectedProduct}
+        onClose={() => setSelectedProduct(null)}
+        maxWidth="md"
+        fullWidth
+      >
+          <DialogTitle sx={{ fontWeight: "bold", pb: 0 }}>Product Details</DialogTitle>
+          <DialogContent dividers sx={{ pt: 2 }}>
+            <Box display="flex" flexDirection={{ xs: "column", md: "row" }} gap={4}>
+              <Box>
+                <img
+                  src={selectedProduct?.image_urls?.[0] || "/no-image.png"}
+                  alt="Main"
+                  width={180}
+                  height={180}
+                  style={{ borderRadius: 12, objectFit: "cover", border: "1px solid #ddd" }}
+                />
+              </Box>
+              <Box flex={1}>
+                <Typography variant="h6" gutterBottom>{selectedProduct?.name}</Typography>
+                <Typography variant="body2" color="text.secondary" gutterBottom>
+                  {selectedProduct?.description}
+                </Typography>
+                <Box display="flex" flexWrap="wrap" gap={2}>
+                  <Typography><strong>Price:</strong> ₹{selectedProduct?.price}</Typography>
+                  <Typography><strong>Stock:</strong> {selectedProduct?.stock}</Typography>
+                  <Typography><strong>Category:</strong> {selectedProduct?.category?.name}</Typography>
+                  <Typography><strong>Sub-Category:</strong> {selectedProduct?.sub_category?.name}</Typography>
+                  <Typography>
+                    <strong>Status:</strong>{" "}
+                    <Chip
+                      size="small"
+                      label={selectedProduct?.is_active ? "Active" : "Disabled"}
+                      color={selectedProduct?.is_active ? "success" : "default"}
+                    />
+                  </Typography>
+                </Box>
+              </Box>
+            </Box>
+
+            {selectedProduct?.image_urls?.length > 1 && (
+              <>
+                <Typography mt={3} mb={1} variant="subtitle1">More Images</Typography>
+                <Box display="flex" gap={2} flexWrap="wrap">
+                  {selectedProduct?.image_urls?.slice(1).map((img, idx) => (
+                    <img
+                      key={idx}
+                      src={img}
+                      alt={`Product ${idx}`}
+                      width={80}
+                      height={80}
+                      style={{ objectFit: "cover", borderRadius: 8, border: "1px solid #ccc" }}
+                    />
+                  ))}
+                </Box>
+              </>
+            )}
+          </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setSelectedProduct(null)}>Close</Button>
         </DialogActions>
       </Dialog>
 

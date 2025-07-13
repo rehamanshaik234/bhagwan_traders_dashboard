@@ -19,6 +19,7 @@ import { useCategory } from "../../../hooks/category/useCategory";
 
 const BCrumb = [
   { to: "/", title: "Home" },
+  { to: "/allSubCategories", title: "Sub Categories" },
   { title: "Add Sub Category" },
 ];
 
@@ -147,8 +148,52 @@ const AddSubCategory = () => {
               />
             </Grid>
 
-            <Grid item xs={12} sm={6}>
-              <Button variant="contained" component="label">
+            {/* Image Preview with Cancel Button */}
+            {imagePreview && (
+              <Grid item xs={12}>
+                <Box mt={1} position="relative" display="inline-block">
+                  <Avatar
+                    src={imagePreview}
+                    alt="Preview"
+                    variant="rounded"
+                    sx={{ width: 120, height: 120, border: "1px solid #ccc" }}
+                  />
+                  <Button
+                    size="small"
+                    onClick={() => {
+                      setImagePreview(null);
+                      formik.setFieldValue("file", null);
+                    }}
+                    sx={{
+                      minWidth: 0,
+                      padding: 0,
+                      position: "absolute",
+                      top: -8,
+                      right: -8,
+                      backgroundColor: "#fff",
+                      border: "1px solid #ccc",
+                      borderRadius: "50%",
+                      zIndex: 2,
+                      lineHeight: 1,
+                    }}
+                  >
+                    ✕
+                  </Button>
+                </Box>
+              </Grid>
+            )}
+
+            <Grid item xs={12}>
+              <Button 
+               variant="outlined" 
+               component="label"
+                sx={{
+                  ":hover": {
+                    backgroundColor: "#b9b9b9ff",
+                    borderColor: "#b9b9b9ff",
+                  },
+                }}
+               >
                 Upload Image
                 <input
                   hidden
@@ -176,29 +221,6 @@ const AddSubCategory = () => {
                 </Typography>
               )}
             </Grid>
-
-            {imagePreview && (
-              <Grid item xs={12} sm={6}>
-                <Box
-                  sx={{
-                    border: "1px solid #ccc",
-                    borderRadius: 2,
-                    p: 1,
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    height: "100%",
-                  }}
-                >
-                  <Avatar
-                    src={imagePreview}
-                    alt="Preview"
-                    variant="rounded"
-                    sx={{ width: 120, height: 120 }}
-                  />
-                </Box>
-              </Grid>
-            )}
 
             <Grid item xs={12}>
               <Button
