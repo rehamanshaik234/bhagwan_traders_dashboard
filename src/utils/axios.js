@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const instance = axios.create({
-  baseURL: 'http://localhost:3000/materialmartapi/', // or your deployed URL
+  baseURL: 'https://materialmart.shop/materialmartapi/dashboard', // or your deployed URL
 });
 
 instance.interceptors.request.use((config) => {
