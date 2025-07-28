@@ -1,0 +1,1 @@
+import{s as t,a7 as s}from"./index-6881a38b.js";import{c as r}from"./createStack-ed4bacaf.js";const a=r({createStyledComponent:t("div",{name:"MuiStack",slot:"Root",overridesResolver:(e,o)=>o.root}),useThemeProps:e=>s({props:e,name:"MuiStack"})}),m=a;export{m as S};

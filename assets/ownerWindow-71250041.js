@@ -1,0 +1,1 @@
+import{ay as u}from"./index-6881a38b.js";function a(e,t=166){let o;function n(...c){const r=()=>{e.apply(this,c)};clearTimeout(o),o=setTimeout(r,t)}return n.clear=()=>{clearTimeout(o)},n}function d(e){return u(e).defaultView||window}export{a as d,d as o};

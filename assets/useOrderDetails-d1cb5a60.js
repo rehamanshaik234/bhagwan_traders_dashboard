@@ -1,0 +1,1 @@
+import{M as d,r as t}from"./index-6881a38b.js";function n(){const{on:r,off:s,emit:a}=d(),[l,o]=t.useState(null),u=t.useCallback(e=>{o(null),a("get_order_details",{orderId:e})},[a]);return t.useEffect(()=>(r("order_details",e=>{o(e.data)}),()=>{s("order_details")}),[r,s]),{orderDetail:l,requestDetails:u}}export{n as u};

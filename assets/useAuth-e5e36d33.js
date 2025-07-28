@@ -1,0 +1,1 @@
+import{n as a,m as c,bb as i,bc as l}from"./index-6881a38b.js";const b=()=>{const s=a(),{user:e,token:t,loading:n,error:r}=c(o=>o.auth);return{user:e,token:t,loading:n,error:r,login:(o,u)=>s(i({username:o,password:u})),logoutUser:()=>s(l()),isAuthenticated:!!t}};export{b as u};
