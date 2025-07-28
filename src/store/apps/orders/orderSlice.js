@@ -30,11 +30,12 @@ export const updateOrderStatus = createAsyncThunk(
   }
 );
 
-export const fetchDispatchedOrders = createAsyncThunk(
-  'orders/fetchDispatched',
+export const fetchNonPendingOrders = createAsyncThunk(
+  'orders/fetchNonPendingOrders',
   async (_, { rejectWithValue }) => {
     try {
-      const response = await axios.get('/orders/dispatchedOrder');
+      const response = await axios.get('/orders/nonPendingOrders');
+      console.log(response)
       return response.data.data;
     } catch (err) {
       return rejectWithValue(err.response?.data || err.message);
@@ -60,6 +61,7 @@ const orderSlice = createSlice({
     pendingOrders: [],
     dispatchedOrders: [],
     deliveredOrders: [],
+    allOrders: [],
     loading: false,
     error: null,
   },
@@ -78,18 +80,6 @@ const orderSlice = createSlice({
         state.error = action.payload;
       })
 
-      .addCase(fetchDispatchedOrders.pending, (state) => {
-        state.loading = true;
-      })
-      .addCase(fetchDispatchedOrders.fulfilled, (state, action) => {
-        state.loading = false;
-        state.dispatchedOrders = action.payload;
-      })
-      .addCase(fetchDispatchedOrders.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload;
-      })
-
       .addCase(updateOrderStatus.fulfilled, (state, action) => {
         const { orderId } = action.payload;
         state.pendingOrders = state.pendingOrders.filter((o) => o.id !== orderId);
@@ -104,6 +94,19 @@ const orderSlice = createSlice({
       .addCase(fetchDeliveredOrders.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
+      })
+      
+      .addCase(fetchNonPendingOrders.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchNonPendingOrders.fulfilled, (state, action) => {
+        state.allOrders = action.payload;
+        state.loading = false;
+      })
+      .addCase(fetchNonPendingOrders.rejected, (state, action) => {
+        state.error = action.payload;
+        state.loading = false;
       });
   },
 });

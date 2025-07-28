@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchPendingOrders, updateOrderStatus } from '../store/apps/orders/orderSlice';
 
@@ -11,10 +11,14 @@ const usePendingOrders = () => {
     dispatch(fetchPendingOrders());
   }, [dispatch]);
 
+    const refetchPendingOrders = useCallback(() => {
+    dispatch(fetchPendingOrders());
+  }, [dispatch]);
+
   const handleStatusUpdate = async (orderId) => {
     setBtnLoadingId(orderId);
     try {
-      await dispatch(updateOrderStatus({ orderId, newStatus: 'dispatched' })).unwrap();
+      await dispatch(updateOrderStatus({ orderId, newStatus: 'Dispatched' })).unwrap();
     } finally {
       setBtnLoadingId(null);
     }
@@ -25,6 +29,7 @@ const usePendingOrders = () => {
     loading,
     btnLoadingId,
     handleStatusUpdate,
+    refetchPendingOrders,
   };
 };
 

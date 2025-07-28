@@ -40,6 +40,7 @@ const EcommerceDash = Loadable(lazy(() => import('../views/dashboard/Ecommerce')
 const PendingOrders = Loadable(lazy(() => import('../views/apps/manageOrders/PendingOrders')));
 const DispatchedOrders = Loadable(lazy(() => import('../views/apps/manageOrders/DispatchedOrders')));
 const DeliveredOrders = Loadable(lazy(() => import('../views/apps/manageOrders/DeliveredOrders')));
+const OrderDetail = Loadable(lazy(() => import('../views/apps/manageOrders/OrderDetail')));
 
 /***Inventory***/
 const DisableProduct = Loadable(lazy(() => import('../views/apps/inventory/DisableProduct')));
@@ -166,6 +167,7 @@ const Router = [
       { path: '/dashboards/modern', exact: true, element: <ModernDash /> },
       { path: '/dashboards/ecommerce', exact: true, element: <EcommerceDash /> },
       { path: '/pendingOrders', element: <PendingOrders /> },
+      { path: '/order/:id', element: <OrderDetail /> },
       { path: '/dispatchedOrders', element: <DispatchedOrders /> },
       { path: '/deliveredOrders', element: <DeliveredOrders /> },
       { path: '/manageProducts', element: <ManageProducts /> },

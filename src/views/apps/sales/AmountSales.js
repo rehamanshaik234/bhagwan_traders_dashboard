@@ -134,22 +134,61 @@ const AmountSales = () => {
       ) : view === 'chart' ? (
         <ResponsiveContainer width="100%" height={400}>
           {chartType === 'line' ? (
-            <LineChart data={data} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+            <LineChart data={data} margin={{ top: 20, right: 40, left: 30, bottom: 30 }}>
               <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="label" />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              <Line type="monotone" dataKey="total_amount" stroke="#82ca9d" name="Total Revenue" />
+              <XAxis
+                dataKey="label"
+                label={{ value: 'Date', position: 'insideBottom', offset: -1, style: { fontSize: 12 } }}
+                tick={{ fontSize: 10 }}
+              />
+              <YAxis
+                label={{
+                  value: 'Revenue (₹)',
+                  angle: -90,
+                  position: 'insideLeft',
+                  offset: -10,
+                  style: { fontSize: 12 }
+                }}
+                tick={{ fontSize: 10 }}
+                tickFormatter={(value) => `₹${value.toLocaleString()}`}
+              />
+              <Tooltip
+                formatter={(value) => `₹${value.toLocaleString()}`}
+                contentStyle={{ fontSize: 12 }}
+              />
+              <Legend wrapperStyle={{ fontSize: 12 }} />
+              <Line
+                type="monotone"
+                dataKey="total_amount"
+                stroke="#0f766e"
+                name="Total Revenue"
+                strokeWidth={2}
+              />
             </LineChart>
           ) : (
-            <BarChart data={data} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+            <BarChart data={data} margin={{ top: 20, right: 40, left: 20, bottom: 30 }}>
               <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="label" />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              <Bar dataKey="total_amount" fill="#82ca9d" name="Total Revenue" />
+              <XAxis
+                dataKey="label"
+                label={{ value: 'Date', position: 'insideBottom', offset: -10, style: { fontSize: 12 } }}
+                tick={{ fontSize: 10 }}
+              />
+              <YAxis
+                label={{
+                  value: 'Revenue (₹)',
+                  angle: -90,
+                  position: 'insideLeft',
+                  style: { fontSize: 12 }
+                }}
+                tick={{ fontSize: 10 }}
+                tickFormatter={(value) => `₹${value.toLocaleString()}`}
+              />
+              <Tooltip
+                formatter={(value) => `₹${value.toLocaleString()}`}
+                contentStyle={{ fontSize: 12 }}
+              />
+              <Legend wrapperStyle={{ fontSize: 12 }} />
+              <Bar dataKey="total_amount" fill="#0f766e" name="Total Revenue" />
             </BarChart>
           )}
         </ResponsiveContainer>
@@ -162,14 +201,20 @@ const AmountSales = () => {
                 <TableCell>Total Amount</TableCell>
               </TableRow>
             </TableHead>
-            <TableBody>
-              {(data || []).map((item, idx) => (
-                <TableRow key={idx}>
-                  <TableCell>{item.label}</TableCell>
-                  <TableCell>{item.total_amount}</TableCell>
+              <TableBody>
+                {data.map((item, idx) => (
+                  <TableRow key={idx}>
+                    <TableCell>{new Date(item.label).toLocaleDateString()}</TableCell>
+                    <TableCell>₹{item.total_amount.toLocaleString()}</TableCell>
+                  </TableRow>
+                ))}
+                <TableRow sx={{ fontWeight: 'bold', backgroundColor: '#f9fafb' }}>
+                  <TableCell>Total</TableCell>
+                  <TableCell>
+                    ₹{data.reduce((acc, cur) => acc + cur.total_amount, 0).toLocaleString()}
+                  </TableCell>
                 </TableRow>
-              ))}
-            </TableBody>
+              </TableBody>
           </Table>
         </Paper>
       )}

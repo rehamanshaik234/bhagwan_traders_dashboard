@@ -131,27 +131,66 @@ const ProductSales = () => {
       ) : error ? (
         <Typography color="error">{error}</Typography>
       ) : view === 'chart' ? (
-        <ResponsiveContainer width="100%" height={400}>
-          {chartType === 'line' ? (
-            <LineChart data={data} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="label" />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              <Line type="monotone" dataKey="total_quantity" stroke="#8884d8" name="Product Quantity" />
-            </LineChart>
-          ) : (
-            <BarChart data={data} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="label" />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              <Bar dataKey="total_quantity" fill="#8884d8" name="Product Quantity" />
-            </BarChart>
-          )}
-        </ResponsiveContainer>
+            <ResponsiveContainer width="100%" height={400}>
+              {chartType === 'line' ? (
+                <LineChart data={data} margin={{ top: 20, right: 40, left: 30, bottom: 30 }}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis
+                    dataKey="label"
+                    label={{ value: 'Date', position: 'insideBottom', offset: -1, style: { fontSize: 12 } }}
+                    tick={{ fontSize: 10 }}
+                  />
+                  <YAxis
+                    label={{
+                      value: 'Units Sold',
+                      angle: -90,
+                      position: 'insideLeft',
+                      offset: -10,
+                      style: { fontSize: 12 }
+                    }}
+                    tick={{ fontSize: 10 }}
+                    tickFormatter={(value) => value.toLocaleString()}
+                  />
+                  <Tooltip
+                    formatter={(value) => `${value.toLocaleString()} units`}
+                    contentStyle={{ fontSize: 12 }}
+                  />
+                  <Legend wrapperStyle={{ fontSize: 12 }} />
+                  <Line
+                    type="monotone"
+                    dataKey="total_quantity"
+                    stroke="#8884d8"
+                    name="Product Quantity"
+                    strokeWidth={2}
+                  />
+                </LineChart>
+              ) : (
+                <BarChart data={data} margin={{ top: 20, right: 40, left: 30, bottom: 30 }}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis
+                    dataKey="label"
+                    label={{ value: 'Date', position: 'insideBottom', offset: -10, style: { fontSize: 12 } }}
+                    tick={{ fontSize: 10 }}
+                  />
+                  <YAxis
+                    label={{
+                      value: 'Units Sold',
+                      angle: -90,
+                      position: 'insideLeft',
+                      style: { fontSize: 12 }
+                    }}
+                    tick={{ fontSize: 10 }}
+                    tickFormatter={(value) => value.toLocaleString()}
+                  />
+                  <Tooltip
+                    formatter={(value) => `${value.toLocaleString()} units`}
+                    contentStyle={{ fontSize: 12 }}
+                  />
+                  <Legend wrapperStyle={{ fontSize: 12 }} />
+                  <Bar dataKey="total_quantity" fill="#8884d8" name="Product Quantity" />
+                </BarChart>
+              )}
+            </ResponsiveContainer>
       ) : (
         <Paper sx={{ mt: 2 }}>
           <Table>
@@ -162,13 +201,19 @@ const ProductSales = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {data.map((item, idx) => (
-                <TableRow key={idx}>
-                  <TableCell>{item.label}</TableCell>
-                  <TableCell>{item.total_quantity}</TableCell>
+                {data.map((item, idx) => (
+                  <TableRow key={idx}>
+                    <TableCell>{new Date(item.label).toLocaleDateString()}</TableCell>
+                    <TableCell>{item.total_quantity.toLocaleString()} units</TableCell>
+                  </TableRow>
+                ))}
+                <TableRow sx={{ fontWeight: 'bold', backgroundColor: '#f3f4f6' }}>
+                  <TableCell>Total</TableCell>
+                  <TableCell>
+                    {data.reduce((acc, cur) => acc + cur.total_quantity, 0).toLocaleString()} units
+                  </TableCell>
                 </TableRow>
-              ))}
-            </TableBody>
+              </TableBody>
           </Table>
         </Paper>
       )}

@@ -30,6 +30,10 @@ import {
   DialogContentText,
   DialogActions,
 } from '@mui/material';
+import useSocket from '../../../hooks/Socket/useSocket';
+import { useEffect } from 'react';
+import { Snackbar, Alert } from '@mui/material';
+import { useLiveOrders } from "./../../../hooks/orders/useLiveOrders"
 
 const BCrumb = [
   { to: '/', title: 'Home' },
@@ -68,32 +72,70 @@ const PendingOrders = () => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [openDialog, setOpenDialog] = useState(false);
-const [selectedOrderId, setSelectedOrderId] = useState(null);
-
-const handleOpenDialog = (orderId) => {
-  setSelectedOrderId(orderId);
-  setOpenDialog(true);
-};
-
-const handleCloseDialog = () => {
-  setOpenDialog(false);
-  setSelectedOrderId(null);
-};
-
-const handleConfirmUpdate = () => {
-  if (selectedOrderId) {
-    handleStatusUpdate(selectedOrderId);
-    handleCloseDialog();
-  }
-};
-
+  const [selectedOrderId, setSelectedOrderId] = useState(null);
+  const [newOrderNotification, setNewOrderNotification] = useState(null);
+  const [canPlayAudio, setCanPlayAudio] = useState(false);
+  const { on, off, emit } = useSocket();
+  const { orders } = useLiveOrders();
 
   const {
     pendingOrders,
     loading,
     btnLoadingId,
     handleStatusUpdate,
+    refetchPendingOrders,
   } = usePendingOrders();
+
+  useEffect(() => {
+    const handleUserInteraction = () => {
+      setCanPlayAudio(true);
+      window.removeEventListener('click', handleUserInteraction);
+    };
+
+    window.addEventListener('click', handleUserInteraction);
+
+    return () => {
+      window.removeEventListener('click', handleUserInteraction);
+    };
+  }, []);
+  
+
+
+  const handleOpenDialog = (orderId) => {
+    setSelectedOrderId(orderId);
+    setOpenDialog(true);
+  };
+
+  const handleCloseDialog = () => {
+    setOpenDialog(false);
+    setSelectedOrderId(null);
+  };
+
+  const handleConfirmUpdate = async () => {
+    if (selectedOrderId) {
+      // handleStatusUpdate(selectedOrderId);
+      emit("dispatch_order", {
+      orderId: selectedOrderId,
+      status: "Dispatched",
+
+      })
+      await refetchPendingOrders();
+      playNotificationSound();
+      handleCloseDialog();
+    }
+  };
+
+  const playNotificationSound = () => {
+    if (!canPlayAudio) {
+      console.warn("Audio blocked: no user interaction yet");
+      return;
+    }
+
+    const audio = new Audio('/sound/notification.mp3');
+    audio.play().catch((err) => {
+      console.error("Audio playback failed:", err);
+    });
+  };
 
   const handleChangePage = (event, newPage) => setPage(newPage);
   const handleChangeRowsPerPage = (event) => {
@@ -103,6 +145,21 @@ const handleConfirmUpdate = () => {
 
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - pendingOrders.length) : 0;
+
+
+    useEffect(() => {
+      const handleNewOrder = (payload) => {
+        console.log("New order received:", payload);
+        setNewOrderNotification(`${payload.message} - orderId: ${payload.data.order_id}`);
+        playNotificationSound();
+      };
+
+      on("new_order", handleNewOrder);
+
+      return () => {
+        off("new_order", handleNewOrder);
+      };
+    }, [on, off, canPlayAudio]);
 
   return (
     <>
@@ -202,6 +259,17 @@ const handleConfirmUpdate = () => {
           </DialogActions>
         </Dialog>
       </Paper>
+
+      <Snackbar
+        open={!!newOrderNotification}
+        autoHideDuration={4000}
+        onClose={() => setNewOrderNotification(null)}
+        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+      >
+        <Alert severity="info" onClose={() => setNewOrderNotification(null)} variant="filled">
+          {newOrderNotification}
+        </Alert>
+      </Snackbar>
     </>
   );
 };

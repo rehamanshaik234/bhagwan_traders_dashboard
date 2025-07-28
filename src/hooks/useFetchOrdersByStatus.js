@@ -1,17 +1,17 @@
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchDispatchedOrders } from '../store/apps/orders/orderSlice';
+import { fetchNonPendingOrders  } from '../store/apps/orders/orderSlice';
 
 const useFetchOrdersByStatus = () => {
   const dispatch = useDispatch();
-  const { dispatchedOrders, loading, error } = useSelector((state) => state.orders);
+  const { allOrders, loading, error } = useSelector((state) => state.orders);
 
   useEffect(() => {
-    dispatch(fetchDispatchedOrders());
+    dispatch(fetchNonPendingOrders());
   }, [dispatch]);
 
   return {
-    orders: dispatchedOrders,
+    orders: allOrders,
     loading,
     error,
   };
