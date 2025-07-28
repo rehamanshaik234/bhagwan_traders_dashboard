@@ -4,9 +4,9 @@ import { ThemeSettings } from './theme/Theme';
 import RTL from './layouts/full/shared/customizer/RTL';
 import ScrollToTop from './components/shared/ScrollToTop';
 import Router from './routes/Router';
-import { CssBaseline, Snackbar, ThemeProvider } from '@mui/material';
+import { Alert, CssBaseline, Snackbar, ThemeProvider } from '@mui/material';
 import { messaging, getToken, onMessage } from './firebase';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import useSocket from './hooks/Socket/useSocket';
 
 export const requestForToken = () => {
