@@ -1,5 +1,5 @@
 import { useRoutes } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { ThemeSettings } from './theme/Theme';
 import RTL from './layouts/full/shared/customizer/RTL';
 import ScrollToTop from './components/shared/ScrollToTop';
@@ -8,6 +8,7 @@ import { Alert, CssBaseline, Snackbar, ThemeProvider } from '@mui/material';
 import { messaging, getToken, onMessage } from './firebase';
 import { useEffect, useState } from 'react';
 import useSocket from './hooks/Socket/useSocket';
+import { fetchNonPendingOrders, fetchPendingOrders } from './store/apps/orders/orderSlice';
 
 export const requestForToken = () => {
   return getToken(messaging, {
@@ -34,6 +35,7 @@ function App() {
   const { on, off } = useSocket();
   const [notification, setNotification] = useState(null);
   const [canPlayAudio, setCanPlayAudio] = useState(false);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     onMessage(messaging, (payload) => {
@@ -76,6 +78,7 @@ function App() {
       if (canPlayAudio) {
         const audio = new Audio('/sound/notification.mp3');
         audio.play().catch(console.error);
+        dispatch(fetchPendingOrders());
       }
     };
 
