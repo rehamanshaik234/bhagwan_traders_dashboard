@@ -30,6 +30,11 @@ const AuthLogin = ({ title, subtitle, subtext }) => {
   }, [error]);
 
   const handleLogin = () => {
+    if (!username || !password) {
+      return;
+    }
+    setUsername('');
+    setPassword('');
     login(username, password);
   };
 
@@ -44,9 +49,10 @@ const AuthLogin = ({ title, subtitle, subtext }) => {
 
       <Stack>
         <Box>
-          <CustomFormLabel htmlFor="username">Username</CustomFormLabel>
+          <CustomFormLabel htmlFor="username">Email</CustomFormLabel>
           <CustomTextField
             id="username"
+            placeholder="Enter Email"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             fullWidth
@@ -57,6 +63,7 @@ const AuthLogin = ({ title, subtitle, subtext }) => {
           <CustomTextField
             id="password"
             type="password"
+            placeholder="Enter Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             fullWidth
@@ -71,7 +78,8 @@ const AuthLogin = ({ title, subtitle, subtext }) => {
           size="large"
           fullWidth
           onClick={handleLogin}
-          disabled={loading}
+          disableElevation
+          disabled={loading || !username || !password}
         >
           {loading ? 'Signing In...' : 'Sign In'}
         </Button>
@@ -83,7 +91,7 @@ const AuthLogin = ({ title, subtitle, subtext }) => {
         open={showError}
         autoHideDuration={4000}
         onClose={() => setShowError(false)}
-        message={error}
+        message={error || 'Login failed. Please try again.'}
       />
     </>
   );
