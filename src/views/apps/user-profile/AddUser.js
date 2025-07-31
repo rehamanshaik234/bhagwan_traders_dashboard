@@ -50,11 +50,11 @@ const AddUser = () => {
   const handleSubmit = async () => {
     try {
       if (selectedUser) {
-        await updateUser(selectedUser.id, form);
-        setSnackbar({ open: true, message: "User updated successfully" });
+        const response = await updateUser(selectedUser.id, form);
+        setSnackbar({ open: true, message: response.data.message ?? "User updated successfully" });
       } else {
-        await addUser(form);
-        setSnackbar({ open: true, message: "User added successfully" });
+        const response = await addUser(form);
+        setSnackbar({ open: true, message: response.data.message ?? "User added successfully" });
       }
       getUsers();
       setOpenModal(false);
@@ -69,9 +69,9 @@ const AddUser = () => {
 
   const handleDelete = async () => {
     try {
-      await deleteUser(deleteConfirm.userId);
+      const response = await deleteUser(deleteConfirm.userId);
       getUsers();
-      setSnackbar({ open: true, message: "User deleted" });
+      setSnackbar({ open: true, message: response.data.message ?? "User deleted" });
     } catch {
       setSnackbar({ open: true, message: "Delete failed" });
     } finally {
@@ -81,8 +81,8 @@ const AddUser = () => {
 
   const handleChangePassword = async () => {
     try {
-      await changePassword(selectedUser.id, passwordForm);
-      setSnackbar({ open: true, message: "Password updated" });
+      const response = await changePassword(selectedUser.id, passwordForm);
+      setSnackbar({ open: true, message: response.data.message ?? "Password updated" });
       setOpenPwdModal(false);
     } catch {
       setSnackbar({ open: true, message: "Password update failed" });
