@@ -73,6 +73,7 @@ const PendingOrders = () => {
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedOrderId, setSelectedOrderId] = useState(null);
+  const [customerId, setCustomerId] = useState(null);
   const [newOrderNotification, setNewOrderNotification] = useState(null);
   const [canPlayAudio, setCanPlayAudio] = useState(false);
   const { on, off, emit } = useSocket();
@@ -101,8 +102,9 @@ const PendingOrders = () => {
   
 
 
-  const handleOpenDialog = (orderId) => {
+  const handleOpenDialog = (orderId,customerId) => {
     setSelectedOrderId(orderId);
+    setCustomerId(customerId)
     setOpenDialog(true);
   };
 
@@ -117,9 +119,9 @@ const PendingOrders = () => {
       emit("dispatch_order", {
       orderId: selectedOrderId,
       status: "Dispatched",
-
-      })
-      await refetchPendingOrders();
+      customer_id : customerId
+      });
+      refetchPendingOrders();
       playNotificationSound();
       handleCloseDialog();
     }
@@ -206,7 +208,7 @@ const PendingOrders = () => {
                       variant="contained"
                       size="small"
                       disabled={btnLoadingId === row.id}
-                      onClick={() => handleOpenDialog(row.id)}
+                      onClick={() => handleOpenDialog(row.id,row.customer_id)}
                       startIcon={
                         btnLoadingId === row.id ? <CircularProgress size={18} color="inherit" /> : null
                       }
