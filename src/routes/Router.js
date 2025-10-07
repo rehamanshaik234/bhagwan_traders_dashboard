@@ -144,6 +144,7 @@ const MuiTypography = Loadable(lazy(() => import('../views/ui-components/MuiTypo
 // authentication
 const Login = Loadable(lazy(() => import('../views/authentication/auth1/Login')));
 const Login2 = Loadable(lazy(() => import('../views/authentication/auth2/Login2')));
+const LoginCheck = Loadable(lazy(() => import('../views/authentication/auth1/LoginCheck')));
 const Register = Loadable(lazy(() => import('../views/authentication/auth1/Register')));
 const Register2 = Loadable(lazy(() => import('../views/authentication/auth2/Register2')));
 const ForgotPassword = Loadable(lazy(() => import('../views/authentication/auth1/ForgotPassword')));
@@ -163,7 +164,7 @@ const Router = [
     path: '/',
     element: <FullLayout />,
     children: [
-      { path: '/', element: <Navigate to="/dashboards/ecommerce" /> },
+      { path: '/', element: <LoginCheck /> },
       { path: '/dashboards/modern', exact: true, element: <ModernDash /> },
       { path: '/dashboards/ecommerce', exact: true, element: <EcommerceDash /> },
       { path: '/pendingOrders', element: <PendingOrders /> },
