@@ -1,6 +1,8 @@
 // src/hooks/useLiveOrders.js
 import { useState, useEffect } from 'react';
 import useSocket from '../Socket/useSocket';
+import { func } from 'prop-types';
+import { useDispatch } from 'react-redux';
 
 export function useLiveOrders() {
   const { on, off } = useSocket();
@@ -17,4 +19,9 @@ export function useLiveOrders() {
   }, [on, off]);
 
   return { orders };
+}
+
+export function orderDetails(){
+  const dispatch = useDispatch();
+  
 }

@@ -60,7 +60,7 @@ const TablePaginationActions = ({ count, page, rowsPerPage, onPageChange }) => {
 };
 
 const DispatchedOrder = () => {
-  const [tab, setTab] = useState('dispatched');
+  const [tab, setTab] = useState('Dispatched');
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const { orders, loading, error } = useNonPendingOrders();
@@ -81,9 +81,9 @@ const DispatchedOrder = () => {
 
       <Paper sx={{ mb: 2 }}>
         <Tabs value={tab} onChange={(e, newTab) => setTab(newTab)} centered>
-          <Tab label="Dispatched" value="dispatched" />
-          <Tab label="Picked" value="picked" />
-          <Tab label="Out For Delivery" value="outfordelivery" />
+          <Tab label="Dispatched" value="Dispatched" />
+          <Tab label="Picked" value="Picked" />
+          <Tab label="Out For Delivery" value="Out For Delivery" />
         </Tabs>
       </Paper>
 

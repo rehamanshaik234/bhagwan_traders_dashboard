@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import {
   Typography,
   Table,
@@ -12,9 +12,11 @@ import {
   IconButton,
   Paper,
   Chip,
+  Button,
   CircularProgress,
+  Modal,
 } from '@mui/material';
-import { Box } from '@mui/system';
+import { Box, color } from '@mui/system';
 import FirstPageIcon from '@mui/icons-material/FirstPage';
 import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
 import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
@@ -22,6 +24,8 @@ import LastPageIcon from '@mui/icons-material/LastPage';
 import { useTheme } from '@mui/material/styles';
 import Breadcrumb from '../../../layouts/full/shared/breadcrumb/Breadcrumb';
 import useFetchDeliveredOrders from '../../../hooks/useFetchDeliveredOrders';
+import { blue } from '@mui/material/colors';
+import OrderDetail from './OrderDetail';
 
 const BCrumb = [
   { to: '/', title: 'Home' },
@@ -59,6 +63,8 @@ const DeliveredOrders = () => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const { orders: delivered, loading, error } = useFetchDeliveredOrders();
+  const [dialog, setDialog] = useState(false);
+  const [selectedOrderId, setSelectedOrderId] = useState(null);
 
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - delivered.length) : 0;
@@ -72,6 +78,27 @@ const DeliveredOrders = () => {
   return (
     <>
       <Breadcrumb title="Delivered Orders" items={BCrumb} />
+    <Modal open={dialog} onClose={() => setDialog(false)}>
+      <Box
+        sx={{
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          bgcolor: 'background.paper',
+          boxShadow: 24,
+          p: 4,
+          borderRadius: 2,
+          width: 400,
+        }}
+      >
+        <OrderDetail _id={selectedOrderId} />
+        <Button variant="outlined" onClick={() => setDialog(false)} sx={{ mt: 2 }}>
+          Close
+        </Button>
+      </Box>
+    </Modal>
+
       <Paper variant="outlined">
         <TableContainer>
           {loading ? (
@@ -100,8 +127,14 @@ const DeliveredOrders = () => {
                   : delivered
                 ).map((row) => (
                   <TableRow key={row.id}>
-                    <TableCell>{row.id}</TableCell>
-                    <TableCell>{row.customer_id}</TableCell>
+                    <TableCell sx={{ cursor: 'pointer', '&:hover': { color: blue[500], textDecoration: 'underline' } }} onClick={() => {
+                      setSelectedOrderId(row.id);
+                      setDialog(true);
+                    }}>{row.id}</TableCell>
+                    <TableCell sx={{ cursor: 'pointer', '&:hover': { color: blue[500], textDecoration: 'underline' } }} onClick={() => {
+                      setSelectedOrderId(row.id);
+                      setDialog(true);
+                    }} >{row.customer_id}</TableCell>
                     <TableCell>
                       <Chip label={row.status} color="success" size="small" />
                     </TableCell>

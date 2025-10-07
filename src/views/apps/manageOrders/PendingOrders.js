@@ -14,6 +14,7 @@ import {
   Chip,
   Button,
   CircularProgress,
+  Modal,
 } from '@mui/material';
 import { Box } from '@mui/system';
 import FirstPageIcon from '@mui/icons-material/FirstPage';
@@ -34,6 +35,8 @@ import useSocket from '../../../hooks/Socket/useSocket';
 import { useEffect } from 'react';
 import { Snackbar, Alert } from '@mui/material';
 import { useLiveOrders } from "./../../../hooks/orders/useLiveOrders"
+import OrderDetail from './OrderDetail';
+import { blue } from '@mui/material/colors';
 
 const BCrumb = [
   { to: '/', title: 'Home' },
@@ -78,6 +81,8 @@ const PendingOrders = () => {
   const [canPlayAudio, setCanPlayAudio] = useState(false);
   const { on, off, emit } = useSocket();
   const { orders } = useLiveOrders();
+  const [dialog, setDialog] = useState(false);
+  
 
   const {
     pendingOrders,
@@ -166,6 +171,26 @@ const PendingOrders = () => {
   return (
     <>
       <Breadcrumb title="Pending Orders" items={BCrumb} />
+        <Modal open={dialog} onClose={() => setDialog(false)}>
+          <Box
+            sx={{
+              position: 'absolute',
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)',
+              bgcolor: 'background.paper',
+              boxShadow: 24,
+              p: 4,
+              borderRadius: 2,
+              width: 400,
+            }}
+          >
+            <OrderDetail _id={selectedOrderId} />
+            <Button variant="outlined" onClick={() => setDialog(false)} sx={{ mt: 2 }}>
+              Close
+            </Button>
+          </Box>
+        </Modal>
       <Paper variant="outlined">
         <TableContainer>
           <Table sx={{ whiteSpace: 'nowrap' }}>
@@ -185,8 +210,14 @@ const PendingOrders = () => {
                 : pendingOrders
               ).map((row) => (
                 <TableRow key={row.id}>
-                  <TableCell>{row.id}</TableCell>
-                  <TableCell>{row.customer_id}</TableCell>
+                  <TableCell sx={{ cursor: 'pointer', '&:hover': { color: blue[500], textDecoration: 'underline' } }} onClick={() => {
+                      setSelectedOrderId(row.id);
+                      setDialog(true);
+                    }}>{row.id}</TableCell>
+                  <TableCell sx={{ cursor: 'pointer', '&:hover': { color: blue[500], textDecoration: 'underline' } }} onClick={() => {
+                      setSelectedOrderId(row.id);
+                      setDialog(true);
+                    }}>{row.customer_id}</TableCell>
                   <TableCell>
                     <Chip label={row.status} color="warning" size="small" />
                   </TableCell>
